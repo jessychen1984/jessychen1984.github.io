@@ -11,30 +11,30 @@
     <meta name="theme-color" content="#000000">
     
     <!-- Open Graph -->
-    <meta property="og:title" content="Airflow中的路径选择 - Kiwi的博客 | Kiwi Blog">
+    <meta property="og:title" content="MiniProj之简单计算题出题器 - Kiwi的博客 | Kiwi Blog">
     
     <meta property="og:type" content="article">
-    <meta property="og:description" content="
-  Airflow 是 Airbnb 公司开源的任务调度系统, 通过使用 Python 开发 DAG, 非常方便的调度计算任务。
-
+    <meta property="og:description" content="最近，家有小儿初长成。曾经萌萌哒的Sam小盆友也马上要步入小学生的行列了。为了不输在起跑线上，老母亲决定每天给出100题计算题😏。手动出题太麻烦，肿么办？当然是动手写一个了！用上伟大的Python，分分钟搞定不在话下：
 ">
     
-    <meta property="article:published_time" content="2020-03-22T00:00:00Z">
+    <meta property="article:published_time" content="2020-03-23T00:00:00Z">
     
     
     <meta property="article:author" content="jessychen">
     
     
-    <meta property="article:tag" content="Airflow">
+    <meta property="article:tag" content="Python">
     
     <meta property="article:tag" content="CS">
     
+    <meta property="article:tag" content="MiniProj">
+    
     
     <meta property="og:image" content="https://jessychen1984.github.io/img/wechat.jpg">
-    <meta property="og:url" content="https://jessychen1984.github.io/2020/03/22/python-branch/">
+    <meta property="og:url" content="https://jessychen1984.github.io/2020/03/23/calculate-generator/">
     <meta property="og:site_name" content="Kiwi的博客 | Kiwi Blog">
     
-    <title>Airflow中的路径选择 - Kiwi的博客 | Kiwi Blog</title>
+    <title>MiniProj之简单计算题出题器 - Kiwi的博客 | Kiwi Blog</title>
 
     <!-- Web App Manifest -->
     <link rel="manifest" href="/pwa/manifest.json">
@@ -43,7 +43,7 @@
     <link rel="shortcut icon" href="/img/favicon.ico">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://jessychen1984.github.io/2020/03/22/python-branch/">
+    <link rel="canonical" href="https://jessychen1984.github.io/2020/03/23/calculate-generator/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -205,15 +205,17 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                        <a class="tag" href="/archive/?tag=Airflow" title="Airflow">Airflow</a>
+                        <a class="tag" href="/archive/?tag=Python" title="Python">Python</a>
                         
                         <a class="tag" href="/archive/?tag=CS" title="CS">CS</a>
                         
+                        <a class="tag" href="/archive/?tag=MiniProj" title="MiniProj">MiniProj</a>
+                        
                     </div>
-                    <h1>Airflow中的路径选择</h1>
+                    <h1>MiniProj之简单计算题出题器</h1>
                     
-                    <h2 class="subheading">DAG path select in Airflow</h2>
-                    <span class="meta">Posted by jessychen on March 22, 2020</span>
+                    <h2 class="subheading">A simple calculation question generator</h2>
+                    <span class="meta">Posted by jessychen on March 23, 2020</span>
                 </div>
             </div>
         </div>
@@ -239,28 +241,7 @@
                 <!-- Multi-Lingual -->
                 
 
-				<blockquote>
-  <p>Airflow 是 Airbnb 公司开源的任务调度系统, 通过使用 Python 开发 DAG, 非常方便的调度计算任务。</p>
-</blockquote>
-
-<p>Airflow之前，当多个上下游的任务间存在依赖时，需要我们自己来写一些调度的code，常用的有几种：</p>
-
-<ul>
-  <li>上游任务完成后置个done标记。需要下游隔段时间检查上游任务有没有完成。</li>
-  <li>上游完成任务后通过某个api来call下游。你说call 失败了？retry大法用起来呀​​。。。</li>
-</ul>
-
-<p>模块太多，依赖太复杂，记不住怎么办？写个文档吧。。。上游改了？？改文档吧。。。下游又变了？？？再改。。。哎呀，上线来不及了，过几天更新吧。。。。那个文档很久没更新了，还是看code吧。。。</p>
-
-<p>而Airflow使用DAG，可以很方便的通过定义<strong>Operator</strong>，及Operator间的关系（<strong>upstream, downstream</strong>）来解决任务之间的各种依赖。同时，它还提供了UI来查看任务依赖的DAG，任务运行状态。简单的说，它可以使我们更多的关注到业务的实现上而不是各种复杂的模块调用及繁琐的文档维护。</p>
-
-<p>当然，作为一条完整的业务流，根据上游的执行结果来决定下游的行为是最常见不过的事了。比如👇的例子：</p>
-
-<p>有个淘气的Sam小盆友，每天按时 <strong>完成作业</strong> 是个大难题。于是，妈妈想了个办法：</p>
-
-<p><img src="/img/in-post/Airflow/branch.png" alt="branch-dag" /></p>
-
-<p>真是个不错的法子👍！这里，<code class="highlighter-rouge">8点前写完</code>在Airflow里就是个判断用的task，由它来决定整个DAG的下一步操作。那么，怎么实现呢？Airflow提供了<strong>BranchPythonOperator</strong>，用来支持分支, 通过函数返回要执行的分支。</p>
+				<p>最近，家有小儿初长成。曾经萌萌哒的Sam小盆友也马上要步入小学生的行列了。为了不输在起跑线上，老母亲决定每天给出100题计算题😏。手动出题太麻烦，肿么办？当然是动手写一个了！用上伟大的<strong>Python</strong>，分分钟搞定不在话下：</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
@@ -275,89 +256,131 @@
 11
 12
 13
-</pre></td><td class="rouge-code"><pre><span class="n">check_hour_op</span> <span class="o">=</span> <span class="n">BranchPythonOperator</span><span class="p">(</span>
-  <span class="n">task_id</span> <span class="o">=</span> <span class="s">"check_hour"</span><span class="p">,</span>
-  <span class="n">python_callable</span> <span class="o">=</span> <span class="n">check_hour</span><span class="p">,</span>
-  <span class="n">dag</span> <span class="o">=</span> <span class="n">dag</span>
-<span class="p">)</span>
-<span class="k">def</span> <span class="nf">check_hour</span><span class="p">(){</span>
-  <span class="k">if</span> <span class="n">current_hour</span> <span class="o">&gt;</span> <span class="mi">8</span><span class="p">:</span>
-    <span class="k">return</span> <span class="s">"sleep"</span>
-  <span class="k">else</span><span class="p">:</span>
-    <span class="k">return</span> <span class="s">"watch_animation"</span>
-<span class="p">}</span>
-<span class="n">do_homework_op</span> <span class="o">&gt;&gt;</span> <span class="n">check_hour_op</span> <span class="o">&gt;&gt;</span> <span class="p">[</span><span class="n">watch_animation_op</span><span class="p">,</span> <span class="n">sleep_op</span><span class="p">]</span>
-<span class="n">watch_animation_op</span> <span class="o">&gt;&gt;</span> <span class="n">sleep_op</span>
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+</pre></td><td class="rouge-code"><pre><span class="s">'''
+A simple python calculation question generator
+usg: python calculator.py -d "+,-" -c 3 -l 200 -t 100
+usg: python calculator.py --op_type="+,-" --op_count=3 --limit=20 --total=100
+'''</span>
+<span class="kn">import</span> <span class="nn">sys</span><span class="p">,</span> <span class="n">getopt</span><span class="p">,</span> <span class="n">random</span>
+
+<span class="k">def</span> <span class="nf">auto_cal_generator</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">op_count</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">op_type</span><span class="o">=</span><span class="p">[</span><span class="s">"+"</span><span class="p">],</span> <span class="n">total</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Here are today's </span><span class="si">%</span><span class="s">d works, good luck!"</span> <span class="o">%</span> <span class="n">total</span><span class="p">)</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">op_type</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">total</span><span class="p">):</span>
+        <span class="n">up</span> <span class="o">=</span> <span class="n">limit</span>
+        <span class="n">question</span> <span class="o">=</span> <span class="s">""</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">op_count</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">min</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span><span class="n">up</span><span class="p">)))</span> 
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">question</span> <span class="o">=</span> <span class="s">"</span><span class="si">%</span><span class="s">s</span><span class="si">%</span><span class="s">d"</span> <span class="o">%</span> <span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
+                <span class="n">up</span> <span class="o">-=</span> <span class="n">num</span>
+                <span class="k">continue</span>
+            <span class="n">op_i</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">l</span><span class="p">)</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="n">op_type</span><span class="p">[</span><span class="n">op_i</span><span class="p">]</span>
+            <span class="n">question</span> <span class="o">=</span> <span class="s">"</span><span class="si">%</span><span class="s">s</span><span class="si">%</span><span class="s">s</span><span class="si">%</span><span class="s">d"</span> <span class="o">%</span> <span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">op</span> <span class="o">==</span><span class="s">"+"</span><span class="p">:</span>
+                <span class="n">up</span> <span class="o">-=</span> <span class="n">num</span>
+            <span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s">"-"</span><span class="p">:</span>
+                <span class="n">up</span> <span class="o">+=</span> <span class="n">num</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">"operator error: </span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="n">op</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="si">%</span><span class="s">d: </span><span class="si">%</span><span class="s">s="</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">question</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">argv</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">argv</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="n">opts</span><span class="p">,</span> <span class="n">_dummy</span> <span class="o">=</span> <span class="n">getopt</span><span class="o">.</span><span class="n">getopt</span><span class="p">(</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="s">"l:c:d:t:"</span><span class="p">,</span> <span class="p">[</span><span class="s">"limit="</span><span class="p">,</span><span class="s">"op_count="</span><span class="p">,</span><span class="s">"op_type="</span><span class="p">,</span><span class="s">"total="</span><span class="p">])</span>
+    <span class="n">limit</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">op_count</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">op_type</span> <span class="o">=</span> <span class="p">[</span><span class="s">"+"</span><span class="p">]</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="mi">100</span>
+    
+    <span class="k">for</span> <span class="n">opt</span><span class="p">,</span><span class="n">arg</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"-l"</span><span class="p">,</span> <span class="s">"--limit"</span><span class="p">]:</span>
+            <span class="n">limit</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"-c"</span><span class="p">,</span> <span class="s">"--op_count"</span><span class="p">]:</span>
+            <span class="n">op_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"-d"</span><span class="p">,</span> <span class="s">"--op_type"</span><span class="p">]:</span>
+            <span class="n">op_type</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">","</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"-t"</span><span class="p">,</span> <span class="s">"--total"</span><span class="p">]:</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+
+    <span class="n">auto_cal_generator</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">op_count</span><span class="p">,</span> <span class="n">op_type</span><span class="p">,</span> <span class="n">total</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>  
 </pre></td></tr></tbody></table></code></pre></div></div>
 
-<p>Ok👏 简直太简单了！执行一下试试，然后你会发现，当<code class="highlighter-rouge">check_hour</code>返回<code class="highlighter-rouge">watch_animation</code>时，<code class="highlighter-rouge">sleep</code>这个task的状态永远是skip的？？？让我们翻一下官方的解释：</p>
+<p>有了这个神器后，想看电视？想吃冰激凌？想去游乐园？先做30题解锁，用法：</p>
 
-<blockquote>
-  <p>Note that using tasks with <code class="highlighter-rouge">depends_on_past=True</code> downstream from <code class="highlighter-rouge">BranchPythonOperator</code> is logically unsound as <code class="highlighter-rouge">skipped</code> status will invariably lead to block tasks that depend on their past successes. <code class="highlighter-rouge">skipped</code> states propagates where all directly upstream tasks are <code class="highlighter-rouge">skipped</code>.</p>
-</blockquote>
-
-<p>就是说，<code class="highlighter-rouge">sleep</code>这个task在<code class="highlighter-rouge">check_hour</code>选择了<code class="highlighter-rouge">watch_animation</code>的时候就被skip掉了，即便这里它是<code class="highlighter-rouge">watch_animation</code>的下游任务，仍然不会被执行😭。原因呢？官方说是downstream设了<em>depends_on_past=True</em>。要知道，operator中还有个属性叫<em>trigger_rule</em>，默认值是<em>all_success</em>。这两个组合在一起就要上游的task状态都为<em>success</em>才能继续往下执行。而这里<code class="highlighter-rouge">sleep</code>的上游任务<code class="highlighter-rouge">watch_animation</code>状态是<em>skipped</em>, 所以<code class="highlighter-rouge">sleep</code>就没有被执行到了。那么，如果这里我们把<code class="highlighter-rouge">sleep</code>的<em>trigger_rule</em>置成<em>none_failed</em>的话，整个过程就能按我们预期的执行下去了:</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
-3
-4
-5
-6
-</pre></td><td class="rouge-code"><pre><span class="n">sleep_op</span> <span class="o">=</span> <span class="n">PythonOperator</span><span class="p">(</span>
-  <span class="n">task_id</span> <span class="o">=</span> <span class="s">"sleep"</span><span class="p">,</span>
-  <span class="n">trigger_rule</span> <span class="o">=</span> <span class="s">"none_failed"</span><span class="p">,</span>
-  <span class="n">python_callable</span> <span class="o">=</span> <span class="s">"sleep"</span><span class="p">,</span>
-  <span class="n">dag</span> <span class="o">=</span> <span class="n">dag</span>
-<span class="p">)</span>
+</pre></td><td class="rouge-code"><pre><span class="c">#出30题200以内3个运算符的加减法计算</span>
+python calculator.py <span class="nt">-d</span> <span class="s2">"+,-"</span> <span class="nt">-c</span> 3 <span class="nt">-l</span> 200 <span class="nt">-t</span> 30
 </pre></td></tr></tbody></table></code></pre></div></div>
 
-<p>再试一下，果然可以啦:satisfied:</p>
+<p>看看结果：</p>
 
-<p>Airflow现在支持的Trigger Rules:</p>
+<p><img src="/img/in-post/MiniProj/auto_cal_q.png" alt="auto_cal_q" /></p>
 
-<blockquote>
-  <p>ALL_SUCCESS = ‘all_success’
-ALL_FAILED = ‘all_failed’ 
-ALL_DONE = ‘all_done’ 
-ONE_SUCCESS = ‘one_success’ 
-ONE_FAILED = ‘one_failed’ 
-NONE_FAILED = ‘none_failed’ 
-NONE_SKIPPED = ‘none_skipped’ 
-DUMMY = ‘dummy’</p>
-</blockquote>
+<p>当然，对于不到一年级的小豆包来说，用加减法对付已经戳戳有余了，乘除法等有空再加吧。</p>
 
-<p>除了上面这个方法，我们也可以利用<strong>DummyOperator</strong>来达到想要的效果。也就是在<code class="highlighter-rouge">watch_animation</code>平行的分支上加一个<code class="highlighter-rouge">dummy</code>task，它啥活都不干：</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-</pre></td><td class="rouge-code"><pre><span class="n">dummp_op</span> <span class="o">=</span> <span class="n">DummyOperator</span><span class="p">(</span>
-	<span class="n">task_id</span> <span class="o">=</span> <span class="s">"dummy"</span><span class="p">,</span>
-  <span class="n">dag</span> <span class="o">=</span> <span class="n">dag</span>
-<span class="p">)</span>
-<span class="n">do_homework_op</span> <span class="o">&gt;&gt;</span> <span class="n">check_hour_op</span> <span class="o">&gt;&gt;</span> <span class="p">[</span><span class="n">watch_animation_op</span><span class="p">,</span> <span class="n">dummp_op</span><span class="p">]</span>
-<span class="n">watch_animation_op</span> <span class="o">&gt;&gt;</span> <span class="n">sleep_op</span>
-<span class="n">dummp_op</span> <span class="o">&gt;&gt;</span> <span class="n">sleep_op</span>
-</pre></td></tr></tbody></table></code></pre></div></div>
-
-<p>这种方式更简单易懂，代价就是会稍稍增加些代码，喜欢哪个就仁者见仁了:smirk:。</p>
 
 
                 <hr style="visibility: hidden;">
                 <ul class="pager">
                     
-                    
-                    <li class="next">
-                        <a href="/2020/03/23/calculate-generator/" data-toggle="tooltip" data-placement="top" title="MiniProj之简单计算题出题器">
-                        Next<br>
-                        <span>MiniProj之简单计算题出题器</span>
+                    <li class="previous">
+                        <a href="/2020/03/22/python-branch/" data-toggle="tooltip" data-placement="top" title="Airflow中的路径选择">
+                        Previous<br>
+                        <span>Airflow中的路径选择</span>
                         </a>
                     </li>
+                    
                     
                 </ul>
                 <hr style="visibility: hidden;">
