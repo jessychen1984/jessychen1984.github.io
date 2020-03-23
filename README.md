@@ -1,6 +1,6 @@
 KiwiJia Blog
 ========
 
-### [View KiwiJia Blog](https://jessychen1984.github.io)
+### [View KiwiJia Blog](https://kiwijia.work)
 
 This blog is powered by [Hux Blog](http://huangxuan.me/) 
