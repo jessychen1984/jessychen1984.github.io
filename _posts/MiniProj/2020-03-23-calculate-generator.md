@@ -83,3 +83,5 @@ python calculator.py -d "+,-" -c 3 -l 200 -t 30
 
 当然，对于不到一年级的小豆包来说，用加减法对付已经戳戳有余了，乘除法等有空再加吧。
 
+项目代码[点此](https://github.com/jessychen1984/MiniProj/blob/master/src/misc/calculator.py)下载
+
