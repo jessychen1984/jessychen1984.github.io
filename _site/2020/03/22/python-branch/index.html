@@ -195,7 +195,7 @@
     
 </style>
 
-<header class="intro-header style-text" >
+<header class="intro-header style-text">
 
     <div class="header-mask"></div>
     
@@ -258,11 +258,12 @@
 
 <p>有个淘气的Sam小盆友，每天按时 <strong>完成作业</strong> 是个大难题。于是，妈妈想了个办法：</p>
 
-<p><img src="/img/in-post/Airflow/branch.png" alt="branch-dag" /></p>
+<p><img src="/img/in-post/Airflow/branch.png" alt="branch-dag"></p>
 
 <p>真是个不错的法子👍！这里，<code class="highlighter-rouge">8点前写完</code>在Airflow里就是个判断用的task，由它来决定整个DAG的下一步操作。那么，怎么实现呢？Airflow提供了<strong>BranchPythonOperator</strong>，用来支持分支, 通过函数返回要执行的分支。</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -275,7 +276,8 @@
 11
 12
 13
-</pre></td><td class="rouge-code"><pre><span class="n">check_hour_op</span> <span class="o">=</span> <span class="n">BranchPythonOperator</span><span class="p">(</span>
+</pre></td>
+<td class="rouge-code"><pre><span class="n">check_hour_op</span> <span class="o">=</span> <span class="n">BranchPythonOperator</span><span class="p">(</span>
   <span class="n">task_id</span> <span class="o">=</span> <span class="s">"check_hour"</span><span class="p">,</span>
   <span class="n">python_callable</span> <span class="o">=</span> <span class="n">check_hour</span><span class="p">,</span>
   <span class="n">dag</span> <span class="o">=</span> <span class="n">dag</span>
@@ -288,7 +290,8 @@
 <span class="p">}</span>
 <span class="n">do_homework_op</span> <span class="o">&gt;&gt;</span> <span class="n">check_hour_op</span> <span class="o">&gt;&gt;</span> <span class="p">[</span><span class="n">watch_animation_op</span><span class="p">,</span> <span class="n">sleep_op</span><span class="p">]</span>
 <span class="n">watch_animation_op</span> <span class="o">&gt;&gt;</span> <span class="n">sleep_op</span>
-</pre></td></tr></tbody></table></code></pre></div></div>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
 
 <p>Ok👏 简直太简单了！执行一下试试，然后你会发现，当<code class="highlighter-rouge">check_hour</code>返回<code class="highlighter-rouge">watch_animation</code>时，<code class="highlighter-rouge">sleep</code>这个task的状态永远是skip的？？？让我们翻一下官方的解释：</p>
 
@@ -298,21 +301,24 @@
 
 <p>就是说，<code class="highlighter-rouge">sleep</code>这个task在<code class="highlighter-rouge">check_hour</code>选择了<code class="highlighter-rouge">watch_animation</code>的时候就被skip掉了，即便这里它是<code class="highlighter-rouge">watch_animation</code>的下游任务，仍然不会被执行😭。原因呢？官方说是downstream设了<em>depends_on_past=True</em>。要知道，operator中还有个属性叫<em>trigger_rule</em>，默认值是<em>all_success</em>。这两个组合在一起就要上游的task状态都为<em>success</em>才能继续往下执行。而这里<code class="highlighter-rouge">sleep</code>的上游任务<code class="highlighter-rouge">watch_animation</code>状态是<em>skipped</em>, 所以<code class="highlighter-rouge">sleep</code>就没有被执行到了。那么，如果这里我们把<code class="highlighter-rouge">sleep</code>的<em>trigger_rule</em>置成<em>none_failed</em>的话，整个过程就能按我们预期的执行下去了:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
 6
-</pre></td><td class="rouge-code"><pre><span class="n">sleep_op</span> <span class="o">=</span> <span class="n">PythonOperator</span><span class="p">(</span>
+</pre></td>
+<td class="rouge-code"><pre><span class="n">sleep_op</span> <span class="o">=</span> <span class="n">PythonOperator</span><span class="p">(</span>
   <span class="n">task_id</span> <span class="o">=</span> <span class="s">"sleep"</span><span class="p">,</span>
   <span class="n">trigger_rule</span> <span class="o">=</span> <span class="s">"none_failed"</span><span class="p">,</span>
   <span class="n">python_callable</span> <span class="o">=</span> <span class="s">"sleep"</span><span class="p">,</span>
   <span class="n">dag</span> <span class="o">=</span> <span class="n">dag</span>
 <span class="p">)</span>
-</pre></td></tr></tbody></table></code></pre></div></div>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
 
-<p>再试一下，果然可以啦:satisfied:</p>
+<p>再试一下，果然可以啦<img class="emoji" title=":satisfied:" alt=":satisfied:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f606.png" height="20" width="20"></p>
 
 <p>Airflow现在支持的Trigger Rules:</p>
 
@@ -329,23 +335,26 @@ DUMMY = ‘dummy’</p>
 
 <p>除了上面这个方法，我们也可以利用<strong>DummyOperator</strong>来达到想要的效果。也就是在<code class="highlighter-rouge">watch_animation</code>平行的分支上加一个<code class="highlighter-rouge">dummy</code>task，它啥活都不干：</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
 4
 5
 6
 7
-</pre></td><td class="rouge-code"><pre><span class="n">dummp_op</span> <span class="o">=</span> <span class="n">DummyOperator</span><span class="p">(</span>
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dummp_op</span> <span class="o">=</span> <span class="n">DummyOperator</span><span class="p">(</span>
 	<span class="n">task_id</span> <span class="o">=</span> <span class="s">"dummy"</span><span class="p">,</span>
   <span class="n">dag</span> <span class="o">=</span> <span class="n">dag</span>
 <span class="p">)</span>
 <span class="n">do_homework_op</span> <span class="o">&gt;&gt;</span> <span class="n">check_hour_op</span> <span class="o">&gt;&gt;</span> <span class="p">[</span><span class="n">watch_animation_op</span><span class="p">,</span> <span class="n">dummp_op</span><span class="p">]</span>
 <span class="n">watch_animation_op</span> <span class="o">&gt;&gt;</span> <span class="n">sleep_op</span>
 <span class="n">dummp_op</span> <span class="o">&gt;&gt;</span> <span class="n">sleep_op</span>
-</pre></td></tr></tbody></table></code></pre></div></div>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
 
-<p>这种方式更简单易懂，代价就是会稍稍增加些代码，喜欢哪个就仁者见仁了:smirk:。</p>
+<p>这种方式更简单易懂，代价就是会稍稍增加些代码，喜欢哪个就仁者见仁了<img class="emoji" title=":smirk:" alt=":smirk:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f60f.png" height="20" width="20">。</p>
 
 
                 <hr style="visibility: hidden;">
@@ -389,29 +398,18 @@ DUMMY = ‘dummy’</p>
         
         
         
-        </a>
         
         
-                <a data-sort="0001" 
-                    href="/archive/?tag=Airflow"
-                    title="Airflow"
-                    rel="1">Airflow</a>
         
-                <a data-sort="0000" 
-                    href="/archive/?tag=CS"
-                    title="CS"
-                    rel="2">CS</a>
+                <a data-sort="0001" href="/archive/?tag=Airflow" title="Airflow" rel="1">Airflow</a>
         
-                <a data-sort="0001" 
-                    href="/archive/?tag=MiniProj"
-                    title="MiniProj"
-                    rel="1">MiniProj</a>
+                <a data-sort="0000" href="/archive/?tag=CS" title="CS" rel="2">CS</a>
         
-                <a data-sort="0001" 
-                    href="/archive/?tag=Python"
-                    title="Python"
-                    rel="1">Python
-    </div>
+                <a data-sort="0001" href="/archive/?tag=MiniProj" title="MiniProj" rel="1">MiniProj</a>
+        
+                <a data-sort="0001" href="/archive/?tag=Python" title="Python" rel="1">Python
+    </a>
+</div>
 </section>
 
 
@@ -490,7 +488,7 @@ DUMMY = ‘dummy’</p>
 </ul>
 
                 <p class="copyright text-muted">
-                    Copyright &copy; KiwiJia Blog 2020
+                    Copyright © KiwiJia Blog 2020
                     <br>
                     Powered by <a href="http://huangxuan.me">Hux Blog</a> |
 					<!-- <iframe
@@ -505,19 +503,19 @@ DUMMY = ‘dummy’</p>
 </footer>
 
 <!-- jQuery -->
-<script src="/js/jquery.min.js "></script>
+<script src="/js/jquery.min.js%20"></script>
 
 <!-- Bootstrap Core JavaScript -->
 <!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
-<script src="/js/bootstrap.min.js "></script>
+<script src="/js/bootstrap.min.js%20"></script>
 
 <!-- Custom Theme JavaScript -->
-<script src="/js/hux-blog.min.js "></script>
+<script src="/js/hux-blog.min.js%20"></script>
 
 <!-- Service Worker -->
 
-<script src="/js/snackbar.js "></script>
-<script src="/js/sw-registration.js "></script>
+<script src="/js/snackbar.js%20"></script>
+<script src="/js/sw-registration.js%20"></script>
 
 
 <!-- async load function -->
