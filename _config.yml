@@ -1,10 +1,10 @@
 # Site settings
-title: Kiwi Home
-SEOTitle: Kiwi的博客 | Kiwi Blog
+title: KiwiJia Blog
+SEOTitle: KiwiJia的博客 | KiwiJia Blog
 header-img: img/home-bg.jpg
 email: jessychen@vip.qq.com
-description: ""
-keyword: ""
+description: "This is KiwiJia's blog"
+keyword: "KiwiJia Blog Computer Science coding software airflow python"
 url: "https://jessychen1984.github.io"  # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
