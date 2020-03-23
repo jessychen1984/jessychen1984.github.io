@@ -37,9 +37,9 @@ plugins: [
     jekyll-paginate
     #jekyll-mermaid
 ]
-gems: [jekyll-mermaid]
-mermaid:
-  src: '/js/mermaid.min.js'
+#gems: [jekyll-mermaid]
+#mermaid:
+#  src: '/js/mermaid.min.js'
 
 
 
