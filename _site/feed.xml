@@ -1,149 +1,235 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://jessychen1984.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://jessychen1984.github.io/" rel="alternate" type="text/html" /><updated>2020-03-24T08:27:40+08:00</updated><id>https://jessychen1984.github.io/feed.xml</id><title type="html">KiwiJia Blog</title><subtitle>This is KiwiJia's blog</subtitle><entry><title type="html">MiniProj之简单计算题出题器</title><link href="https://jessychen1984.github.io/2020/03/23/calculate-generator/" rel="alternate" type="text/html" title="MiniProj之简单计算题出题器" /><published>2020-03-23T00:00:00+08:00</published><updated>2020-03-23T00:00:00+08:00</updated><id>https://jessychen1984.github.io/2020/03/23/calculate-generator</id><content type="html" xml:base="https://jessychen1984.github.io/2020/03/23/calculate-generator/">最近，家有小儿初长成。曾经萌萌哒的Sam小盆友也马上要步入小学生的行列了。为了不输在起跑线上，老母亲决定每天给出100题计算题😏。手动出题太麻烦，肿么办？当然是动手写一个了！用上伟大的**Python**，分分钟搞定不在话下：
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://jessychen1984.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://jessychen1984.github.io/" rel="alternate" type="text/html" /><updated>2020-03-24T11:41:22+08:00</updated><id>https://jessychen1984.github.io/feed.xml</id><title type="html">KiwiJia Blog</title><subtitle>This is KiwiJia's blog</subtitle><entry><title type="html">MiniProj之简单计算题出题器</title><link href="https://jessychen1984.github.io/2020/03/23/calculate-generator/" rel="alternate" type="text/html" title="MiniProj之简单计算题出题器" /><published>2020-03-23T00:00:00+08:00</published><updated>2020-03-23T00:00:00+08:00</updated><id>https://jessychen1984.github.io/2020/03/23/calculate-generator</id><content type="html" xml:base="https://jessychen1984.github.io/2020/03/23/calculate-generator/">&lt;p&gt;最近，家有小儿初长成。曾经萌萌哒的Sam小盆友也马上要步入小学生的行列了。为了不输在起跑线上，老母亲决定每天给出100题计算题😏。手动出题太麻烦，肿么办？当然是动手写一个了！用上伟大的&lt;strong&gt;Python&lt;/strong&gt;，分分钟搞定不在话下：&lt;/p&gt;
 
-```python
-'''
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;rouge-gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;rouge-code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;s&quot;&gt;'''
 A simple python calculation question generator
 usg: python calculator.py -d &quot;+,-&quot; -c 3 -l 200 -t 100
 usg: python calculator.py --op_type=&quot;+,-&quot; --op_count=3 --limit=20 --total=100
-'''
-import sys, getopt, random
+'''&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getopt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;
 
-def auto_cal_generator(limit=100, op_count=1, op_type=[&quot;+&quot;], total=100):
-    print(&quot;Here are today's %d works, good luck!&quot; % total)
-    l = len(op_type)-1
-    for j in range(0, total):
-        up = limit
-        question = &quot;&quot;
-        for i in range(0, op_count+1):
-            num = random.randint(1,max(1,min(limit,up))) 
-            if i == 0:
-                question = &quot;%s%d&quot; % (question, num)
-                up -= num
-                continue
-            op_i = random.randint(0,l)
-            op = op_type[op_i]
-            question = &quot;%s%s%d&quot; % (question, op, num)
-            if op ==&quot;+&quot;:
-                up -= num
-            elif op == &quot;-&quot;:
-                up += num
-            else:
-                print(&quot;operator error: %s&quot; % op)
-                sys.exit(1)
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;auto_cal_generator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;limit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op_count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op_type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;+&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;total&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Here are today's &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d works, good luck!&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;total&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;l&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;op_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;total&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;up&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;limit&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;question&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op_count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;num&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;randint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;limit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;up&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt; 
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;question&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;question&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;up&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;continue&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;op_i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;randint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;op&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;op_i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;question&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;question&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;+&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;up&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;-&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;up&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;num&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;operator error: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
         
-        print(&quot;%d: %s=&quot; % (j+1, question))
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;d: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s=&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;question&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 
-def main(argv=None):
-    if argv is None:
-        argv = sys.argv
-    opts, _dummy = getopt.getopt( sys.argv[1:], &quot;l:c:d:t:&quot;, [&quot;limit=&quot;,&quot;op_count=&quot;,&quot;op_type=&quot;,&quot;total=&quot;])
-    limit = 100
-    op_count = 1
-    op_type = [&quot;+&quot;]
-    total = 100
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_dummy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getopt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getopt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:],&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;l:c:d:t:&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;limit=&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;op_count=&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;op_type=&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;total=&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;limit&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;op_count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;op_type&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;+&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;total&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;
     
-    for opt,arg in opts:
-        if opt in [&quot;-l&quot;, &quot;--limit&quot;]:
-            limit = int(arg)
-        elif opt in [&quot;-c&quot;, &quot;--op_count&quot;]:
-            op_count = int(arg)
-        elif opt in [&quot;-d&quot;, &quot;--op_type&quot;]:
-            op_type = arg.strip().split(&quot;,&quot;)
-        elif opt in [&quot;-t&quot;, &quot;--total&quot;]:
-            total = int(arg)
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opt&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;-l&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;--limit&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;limit&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opt&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;-c&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;--op_count&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;op_count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opt&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;-d&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;--op_type&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;op_type&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;strip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;split&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;,&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opt&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;-t&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;--total&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;total&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-    auto_cal_generator(limit, op_count, op_type, total)
+    &lt;span class=&quot;n&quot;&gt;auto_cal_generator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;limit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;total&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-if __name__ == '__main__':
-    main()  
-```
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__name__&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'__main__'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;  
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-有了这个神器后，想看电视？想吃冰激凌？想去游乐园？先做30题解锁，用法：
+&lt;p&gt;有了这个神器后，想看电视？想吃冰激凌？想去游乐园？先做30题解锁，用法：&lt;/p&gt;
 
-```shell
-#出30题200以内3个运算符的加减法计算
-python calculator.py -d &quot;+,-&quot; -c 3 -l 200 -t 30
-```
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;rouge-gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;rouge-code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;c&quot;&gt;#出30题200以内3个运算符的加减法计算&lt;/span&gt;
+python calculator.py &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;+,-&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; 3 &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt; 200 &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; 30
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-看看结果：
+&lt;p&gt;看看结果：&lt;/p&gt;
 
-![auto_cal_q](/img/in-post/MiniProj/auto_cal_q.png)
+&lt;p&gt;&lt;img src=&quot;/img/in-post/MiniProj/auto_cal_q.png&quot; alt=&quot;auto_cal_q&quot; /&gt;&lt;/p&gt;
 
-当然，对于不到一年级的小豆包来说，用加减法对付已经戳戳有余了，乘除法等有空再加吧。
+&lt;p&gt;当然，对于不到一年级的小豆包来说，用加减法对付已经戳戳有余了，乘除法等有空再加吧。&lt;/p&gt;
 
-项目代码[点此](https://github.com/jessychen1984/MiniProj/blob/master/src/misc/calculator.py)下载</content><author><name>jessychen</name></author><category term="Python" /><category term="CS" /><category term="MiniProj" /><summary type="html">最近，家有小儿初长成。曾经萌萌哒的Sam小盆友也马上要步入小学生的行列了。为了不输在起跑线上，老母亲决定每天给出100题计算题😏。手动出题太麻烦，肿么办？当然是动手写一个了！用上伟大的Python，分分钟搞定不在话下：</summary></entry><entry><title type="html">Airflow中的路径选择</title><link href="https://jessychen1984.github.io/2020/03/22/python-branch/" rel="alternate" type="text/html" title="Airflow中的路径选择" /><published>2020-03-22T00:00:00+08:00</published><updated>2020-03-22T00:00:00+08:00</updated><id>https://jessychen1984.github.io/2020/03/22/python-branch</id><content type="html" xml:base="https://jessychen1984.github.io/2020/03/22/python-branch/">&gt; Airflow 是 Airbnb 公司开源的任务调度系统, 通过使用 Python 开发 DAG, 非常方便的调度计算任务。
+&lt;p&gt;项目代码&lt;a href=&quot;https://github.com/jessychen1984/MiniProj/blob/master/src/misc/calculator.py&quot;&gt;点此&lt;/a&gt;下载&lt;/p&gt;</content><author><name>jessychen</name></author><category term="Python" /><category term="CS" /><category term="MiniProj" /><summary type="html">最近，家有小儿初长成。曾经萌萌哒的Sam小盆友也马上要步入小学生的行列了。为了不输在起跑线上，老母亲决定每天给出100题计算题😏。手动出题太麻烦，肿么办？当然是动手写一个了！用上伟大的Python，分分钟搞定不在话下：</summary></entry><entry><title type="html">Airflow中的路径选择</title><link href="https://jessychen1984.github.io/2020/03/22/python-branch/" rel="alternate" type="text/html" title="Airflow中的路径选择" /><published>2020-03-22T00:00:00+08:00</published><updated>2020-03-22T00:00:00+08:00</updated><id>https://jessychen1984.github.io/2020/03/22/python-branch</id><content type="html" xml:base="https://jessychen1984.github.io/2020/03/22/python-branch/">&lt;blockquote&gt;
+  &lt;p&gt;Airflow 是 Airbnb 公司开源的任务调度系统, 通过使用 Python 开发 DAG, 非常方便的调度计算任务。&lt;/p&gt;
+&lt;/blockquote&gt;
 
-Airflow之前，当多个上下游的任务间存在依赖时，需要我们自己来写一些调度的code，常用的有几种：
+&lt;p&gt;Airflow之前，当多个上下游的任务间存在依赖时，需要我们自己来写一些调度的code，常用的有几种：&lt;/p&gt;
 
-* 上游任务完成后置个done标记。需要下游隔段时间检查上游任务有没有完成。
-* 上游完成任务后通过某个api来call下游。你说call 失败了？retry大法用起来呀​​。。。
+&lt;ul&gt;
+  &lt;li&gt;上游任务完成后置个done标记。需要下游隔段时间检查上游任务有没有完成。&lt;/li&gt;
+  &lt;li&gt;上游完成任务后通过某个api来call下游。你说call 失败了？retry大法用起来呀​​。。。&lt;/li&gt;
+&lt;/ul&gt;
 
-模块太多，依赖太复杂，记不住怎么办？写个文档吧。。。上游改了？？改文档吧。。。下游又变了？？？再改。。。哎呀，上线来不及了，过几天更新吧。。。。那个文档很久没更新了，还是看code吧。。。
+&lt;p&gt;模块太多，依赖太复杂，记不住怎么办？写个文档吧。。。上游改了？？改文档吧。。。下游又变了？？？再改。。。哎呀，上线来不及了，过几天更新吧。。。。那个文档很久没更新了，还是看code吧。。。&lt;/p&gt;
 
-而Airflow使用DAG，可以很方便的通过定义**Operator**，及Operator间的关系（**upstream, downstream**）来解决任务之间的各种依赖。同时，它还提供了UI来查看任务依赖的DAG，任务运行状态。简单的说，它可以使我们更多的关注到业务的实现上而不是各种复杂的模块调用及繁琐的文档维护。
+&lt;p&gt;而Airflow使用DAG，可以很方便的通过定义&lt;strong&gt;Operator&lt;/strong&gt;，及Operator间的关系（&lt;strong&gt;upstream, downstream&lt;/strong&gt;）来解决任务之间的各种依赖。同时，它还提供了UI来查看任务依赖的DAG，任务运行状态。简单的说，它可以使我们更多的关注到业务的实现上而不是各种复杂的模块调用及繁琐的文档维护。&lt;/p&gt;
 
-当然，作为一条完整的业务流，根据上游的执行结果来决定下游的行为是最常见不过的事了。比如👇的例子：
+&lt;p&gt;当然，作为一条完整的业务流，根据上游的执行结果来决定下游的行为是最常见不过的事了。比如👇的例子：&lt;/p&gt;
 
-有个淘气的Sam小盆友，每天按时 **完成作业** 是个大难题。于是，妈妈想了个办法：
+&lt;p&gt;有个淘气的Sam小盆友，每天按时 &lt;strong&gt;完成作业&lt;/strong&gt; 是个大难题。于是，妈妈想了个办法：&lt;/p&gt;
 
-![branch-dag](/img/in-post/Airflow/branch.png)
+&lt;p&gt;&lt;img src=&quot;/img/in-post/Airflow/branch.png&quot; alt=&quot;branch-dag&quot; /&gt;&lt;/p&gt;
 
-真是个不错的法子👍！这里，`8点前写完`在Airflow里就是个判断用的task，由它来决定整个DAG的下一步操作。那么，怎么实现呢？Airflow提供了**BranchPythonOperator**，用来支持分支, 通过函数返回要执行的分支。
+&lt;p&gt;真是个不错的法子👍！这里，&lt;code class=&quot;highlighter-rouge&quot;&gt;8点前写完&lt;/code&gt;在Airflow里就是个判断用的task，由它来决定整个DAG的下一步操作。那么，怎么实现呢？Airflow提供了&lt;strong&gt;BranchPythonOperator&lt;/strong&gt;，用来支持分支, 通过函数返回要执行的分支。&lt;/p&gt;
 
-```python
-check_hour_op = BranchPythonOperator(
-  task_id = &quot;check_hour&quot;,
-  python_callable = check_hour,
-  dag = dag
-)
-def check_hour(){
-  if current_hour &gt; 8:
-    return &quot;sleep&quot;
-  else:
-    return &quot;watch_animation&quot;
-}
-do_homework_op &gt;&gt; check_hour_op &gt;&gt; [watch_animation_op, sleep_op]
-watch_animation_op &gt;&gt; sleep_op
-```
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;rouge-gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;rouge-code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;n&quot;&gt;check_hour_op&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BranchPythonOperator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;task_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;check_hour&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;python_callable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;check_hour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;dag&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dag&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;check_hour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(){&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_hour&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;sleep&quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;watch_animation&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;do_homework_op&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;check_hour_op&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch_animation_op&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sleep_op&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;watch_animation_op&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sleep_op&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-Ok👏 简直太简单了！执行一下试试，然后你会发现，当`check_hour`返回`watch_animation`时，`sleep`这个task的状态永远是skip的？？？让我们翻一下官方的解释：
+&lt;p&gt;Ok👏 简直太简单了！执行一下试试，然后你会发现，当&lt;code class=&quot;highlighter-rouge&quot;&gt;check_hour&lt;/code&gt;返回&lt;code class=&quot;highlighter-rouge&quot;&gt;watch_animation&lt;/code&gt;时，&lt;code class=&quot;highlighter-rouge&quot;&gt;sleep&lt;/code&gt;这个task的状态永远是skip的？？？让我们翻一下官方的解释：&lt;/p&gt;
 
-&gt; Note that using tasks with `depends_on_past=True` downstream from `BranchPythonOperator` is logically unsound as `skipped` status will invariably lead to block tasks that depend on their past successes. `skipped` states propagates where all directly upstream tasks are `skipped`.
+&lt;blockquote&gt;
+  &lt;p&gt;Note that using tasks with &lt;code class=&quot;highlighter-rouge&quot;&gt;depends_on_past=True&lt;/code&gt; downstream from &lt;code class=&quot;highlighter-rouge&quot;&gt;BranchPythonOperator&lt;/code&gt; is logically unsound as &lt;code class=&quot;highlighter-rouge&quot;&gt;skipped&lt;/code&gt; status will invariably lead to block tasks that depend on their past successes. &lt;code class=&quot;highlighter-rouge&quot;&gt;skipped&lt;/code&gt; states propagates where all directly upstream tasks are &lt;code class=&quot;highlighter-rouge&quot;&gt;skipped&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
 
-就是说，`sleep`这个task在`check_hour`选择了`watch_animation`的时候就被skip掉了，即便这里它是`watch_animation`的下游任务，仍然不会被执行😭。原因呢？官方说是downstream设了*depends_on_past=True*。要知道，operator中还有个属性叫*trigger_rule*，默认值是*all_success*。这两个组合在一起就要上游的task状态都为*success*才能继续往下执行。而这里`sleep`的上游任务`watch_animation`状态是*skipped*, 所以`sleep`就没有被执行到了。那么，如果这里我们把`sleep`的*trigger_rule*置成*none_failed*的话，整个过程就能按我们预期的执行下去了:
+&lt;p&gt;就是说，&lt;code class=&quot;highlighter-rouge&quot;&gt;sleep&lt;/code&gt;这个task在&lt;code class=&quot;highlighter-rouge&quot;&gt;check_hour&lt;/code&gt;选择了&lt;code class=&quot;highlighter-rouge&quot;&gt;watch_animation&lt;/code&gt;的时候就被skip掉了，即便这里它是&lt;code class=&quot;highlighter-rouge&quot;&gt;watch_animation&lt;/code&gt;的下游任务，仍然不会被执行😭。原因呢？官方说是downstream设了&lt;em&gt;depends_on_past=True&lt;/em&gt;。要知道，operator中还有个属性叫&lt;em&gt;trigger_rule&lt;/em&gt;，默认值是&lt;em&gt;all_success&lt;/em&gt;。这两个组合在一起就要上游的task状态都为&lt;em&gt;success&lt;/em&gt;才能继续往下执行。而这里&lt;code class=&quot;highlighter-rouge&quot;&gt;sleep&lt;/code&gt;的上游任务&lt;code class=&quot;highlighter-rouge&quot;&gt;watch_animation&lt;/code&gt;状态是&lt;em&gt;skipped&lt;/em&gt;, 所以&lt;code class=&quot;highlighter-rouge&quot;&gt;sleep&lt;/code&gt;就没有被执行到了。那么，如果这里我们把&lt;code class=&quot;highlighter-rouge&quot;&gt;sleep&lt;/code&gt;的&lt;em&gt;trigger_rule&lt;/em&gt;置成&lt;em&gt;none_failed&lt;/em&gt;的话，整个过程就能按我们预期的执行下去了:&lt;/p&gt;
 
-```python
-sleep_op = PythonOperator(
-  task_id = &quot;sleep&quot;,
-  trigger_rule = &quot;none_failed&quot;,
-  python_callable = &quot;sleep&quot;,
-  dag = dag
-)
-```
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;rouge-gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+4
+5
+6
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;rouge-code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;n&quot;&gt;sleep_op&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PythonOperator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;task_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;sleep&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;trigger_rule&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;none_failed&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;python_callable&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;sleep&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;dag&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dag&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-再试一下，果然可以啦:satisfied:
+&lt;p&gt;再试一下，果然可以啦:satisfied:&lt;/p&gt;
 
-Airflow现在支持的Trigger Rules:
+&lt;p&gt;Airflow现在支持的Trigger Rules:&lt;/p&gt;
 
-&gt; ALL_SUCCESS = 'all_success'
-&gt; ALL_FAILED = 'all_failed' 
-&gt; ALL_DONE = 'all_done' 
-&gt; ONE_SUCCESS = 'one_success' 
-&gt; ONE_FAILED = 'one_failed' 
-&gt; NONE_FAILED = 'none_failed' 
-&gt; NONE_SKIPPED = 'none_skipped' 
-&gt; DUMMY = 'dummy'
+&lt;blockquote&gt;
+  &lt;p&gt;ALL_SUCCESS = ‘all_success’
+ALL_FAILED = ‘all_failed’ 
+ALL_DONE = ‘all_done’ 
+ONE_SUCCESS = ‘one_success’ 
+ONE_FAILED = ‘one_failed’ 
+NONE_FAILED = ‘none_failed’ 
+NONE_SKIPPED = ‘none_skipped’ 
+DUMMY = ‘dummy’&lt;/p&gt;
+&lt;/blockquote&gt;
 
-除了上面这个方法，我们也可以利用**DummyOperator**来达到想要的效果。也就是在`watch_animation`平行的分支上加一个`dummy`task，它啥活都不干：
+&lt;p&gt;除了上面这个方法，我们也可以利用&lt;strong&gt;DummyOperator&lt;/strong&gt;来达到想要的效果。也就是在&lt;code class=&quot;highlighter-rouge&quot;&gt;watch_animation&lt;/code&gt;平行的分支上加一个&lt;code class=&quot;highlighter-rouge&quot;&gt;dummy&lt;/code&gt;task，它啥活都不干：&lt;/p&gt;
 
-```python
-dummp_op = DummyOperator(
-	task_id = &quot;dummy&quot;,
-  dag = dag
-)
-do_homework_op &gt;&gt; check_hour_op &gt;&gt; [watch_animation_op, dummp_op]
-watch_animation_op &gt;&gt; sleep_op
-dummp_op &gt;&gt; sleep_op
-```
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;rouge-gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+4
+5
+6
+7
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;rouge-code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;n&quot;&gt;dummp_op&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DummyOperator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;task_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;dummy&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;dag&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dag&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;do_homework_op&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;check_hour_op&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;watch_animation_op&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dummp_op&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;watch_animation_op&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sleep_op&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;dummp_op&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sleep_op&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-这种方式更简单易懂，代价就是会稍稍增加些代码，喜欢哪个就仁者见仁了:smirk:。</content><author><name>jessychen</name></author><category term="Airflow" /><category term="CS" /><summary type="html">Airflow 是 Airbnb 公司开源的任务调度系统, 通过使用 Python 开发 DAG, 非常方便的调度计算任务。</summary></entry></feed>
+&lt;p&gt;这种方式更简单易懂，代价就是会稍稍增加些代码，喜欢哪个就仁者见仁了:smirk:。&lt;/p&gt;</content><author><name>jessychen</name></author><category term="Airflow" /><category term="CS" /><summary type="html">Airflow 是 Airbnb 公司开源的任务调度系统, 通过使用 Python 开发 DAG, 非常方便的调度计算任务。</summary></entry></feed>

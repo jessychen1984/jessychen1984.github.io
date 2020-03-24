@@ -13,7 +13,7 @@ future: true
 
 # SNS settings
 RSS: false
-#github_username:    jessychen1984
+github_username:    jessychen1984
 
 
 
@@ -36,7 +36,7 @@ anchorjs: true                          # if you want to customize anchor. check
 plugins: 
   - jekyll-paginate
   - jemoji
-    #jekyll-mermaid
+  - jekyll-mermaid
 
 #gems: [jekyll-mermaid]
 #mermaid:
@@ -80,7 +80,7 @@ netease_comment: false
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "Life is but a span<br>人生苦短"
+sidebar-about-description: "Life is but a span<br />人生苦短"
 sidebar-avatar: /img/wechat.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
