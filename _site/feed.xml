@@ -1,4 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://jessychen1984.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://jessychen1984.github.io/" rel="alternate" type="text/html" /><updated>2020-03-24T11:41:22+08:00</updated><id>https://jessychen1984.github.io/feed.xml</id><title type="html">KiwiJia Blog</title><subtitle>This is KiwiJia's blog</subtitle><entry><title type="html">MiniProj之简单计算题出题器</title><link href="https://jessychen1984.github.io/2020/03/23/calculate-generator/" rel="alternate" type="text/html" title="MiniProj之简单计算题出题器" /><published>2020-03-23T00:00:00+08:00</published><updated>2020-03-23T00:00:00+08:00</updated><id>https://jessychen1984.github.io/2020/03/23/calculate-generator</id><content type="html" xml:base="https://jessychen1984.github.io/2020/03/23/calculate-generator/">&lt;p&gt;最近，家有小儿初长成。曾经萌萌哒的Sam小盆友也马上要步入小学生的行列了。为了不输在起跑线上，老母亲决定每天给出100题计算题😏。手动出题太麻烦，肿么办？当然是动手写一个了！用上伟大的&lt;strong&gt;Python&lt;/strong&gt;，分分钟搞定不在话下：&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-03-24T20:58:56+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">KiwiJia Blog</title><subtitle>This is KiwiJia's blog</subtitle><entry><title type="html">围棋盲如何教小孩下棋</title><link href="http://localhost:4000/2020/03/24/sabaki-go/" rel="alternate" type="text/html" title="围棋盲如何教小孩下棋" /><published>2020-03-24T00:00:00+08:00</published><updated>2020-03-24T00:00:00+08:00</updated><id>http://localhost:4000/2020/03/24/sabaki-go</id><content type="html" xml:base="http://localhost:4000/2020/03/24/sabaki-go/">&lt;blockquote&gt;
+  &lt;p&gt;Sabaki: An elegant Go board and SGF editor for a more civilized age.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;为了锻炼思维，陶冶性情，提高素质 。。。年前就给小Sam报了个围棋课&lt;del&gt;，虽然家里并没有人懂这个&lt;/del&gt;。可惜由于众所周知的原因，春天来了却迟迟不能开课。可是，停课不能停学呀。于是，老师拉了个群，甩出几个棋谱，要求在家先启蒙一下，一看格式：&lt;code class=&quot;highlighter-rouge&quot;&gt;xxx.sgf&lt;/code&gt;，这个怎么看呀？？？&lt;/p&gt;
+
+&lt;p&gt;:woman:： 老师，那个sgf我要怎么打开呀？
+:man:：简单，你下个 &lt;del&gt;猫踢狗&lt;/del&gt; multigo就可以了。
+:woman:：ok~&lt;/p&gt;
+
+&lt;p&gt;然而。。。为啥没有mac版？？？不过难不倒我，让google大神给咱推荐一个😏~&lt;/p&gt;
+
+&lt;p&gt;经过一上午的比较，终于找到一款功能强大，界面美观的在mac下的围棋软件：&lt;a href=&quot;https://sabaki.yichuanshen.de/&quot;&gt;sabaki&lt;/a&gt;。这款软件完全使用网页技术(HTML5 + Javascript)开发，由electron封装成应用程序，最最重要的是，它还是开源的‼️附上&lt;a href=&quot;https://github.com/SabakiHQ/Sabaki&quot;&gt;git地址&lt;/a&gt;，作者贴心的给出了打包好的版本：&lt;a href=&quot;https://github.com/SabakiHQ/Sabaki/releases/&quot;&gt;release&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;直接安装打包好的版本，随意打开个sgf，来感受一下👇：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/in-post/Other/sabaki1.gif&quot; alt=&quot;image-20200324184157994&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;只要按键盘↑↓键就可查看每步棋的落子步骤及解说，是不是很方便？听老师说他们小时候学棋还要手抄棋谱，感慨现在的小盆友真是太幸福了。&lt;/p&gt;
+
+&lt;p&gt;有了sabaki，加上网上找的一堆入门围棋题（当然都是sgf格式的，带解说），在家做围棋启蒙不要太方便啊！ 想到之前手机上下的一些围棋入门app，有的做几题就要收费，有的看答案要收费，有的一堆的广告，有的不带解说，这个真是太适合我种爱动(kou)手(men)的小伙伴了:&lt;/p&gt;
+
+&lt;p&gt;当然，sabaki的功能远远不止这些，它的最强大之处是可以自定义后端的围棋引擎，可以作为多种围棋的前端展现。当然，对于我们家这种围棋小白来说，它的图谱功能已经完全能满足需求了。这里给出官网列出的基本功能：&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;SGF editing tools&lt;/li&gt;
+    &lt;li&gt;Intelligent scoring tool&lt;/li&gt;
+    &lt;li&gt;Game tree&lt;/li&gt;
+    &lt;li&gt;Fuzzy stone placement&lt;/li&gt;
+    &lt;li&gt;GTP Engines&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;有不少围棋高手会用sabaki配置围棋AI引擎&lt;a href=&quot;https://github.com/leela-zero/leela-zero&quot;&gt;Leela Zero&lt;/a&gt;来实现人机大战。网上也有不少教程。加入了Leela的sabaki不但能陪你下棋，还能分析棋局，计算出每步棋的胜率。不过这个Leela下棋实在太过厉害，对普通人来说还是不要找虐的好😂&lt;/p&gt;</content><author><name>jessychen</name></author><category term="other" /><summary type="html">Sabaki: An elegant Go board and SGF editor for a more civilized age.</summary></entry><entry><title type="html">MiniProj之简单计算题出题器</title><link href="http://localhost:4000/2020/03/23/calculate-generator/" rel="alternate" type="text/html" title="MiniProj之简单计算题出题器" /><published>2020-03-23T00:00:00+08:00</published><updated>2020-03-23T00:00:00+08:00</updated><id>http://localhost:4000/2020/03/23/calculate-generator</id><content type="html" xml:base="http://localhost:4000/2020/03/23/calculate-generator/">&lt;p&gt;最近，家有小儿初长成。曾经萌萌哒的Sam小盆友也马上要步入小学生的行列了。为了不输在起跑线上，老母亲决定每天给出100题计算题😏。手动出题太麻烦，肿么办？当然是动手写一个了！用上伟大的&lt;strong&gt;Python&lt;/strong&gt;，分分钟搞定不在话下：&lt;/p&gt;
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;table class=&quot;rouge-table&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;rouge-gutter gl&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
 2
@@ -126,7 +160,7 @@ python calculator.py &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span c
 
 &lt;p&gt;当然，对于不到一年级的小豆包来说，用加减法对付已经戳戳有余了，乘除法等有空再加吧。&lt;/p&gt;
 
-&lt;p&gt;项目代码&lt;a href=&quot;https://github.com/jessychen1984/MiniProj/blob/master/src/misc/calculator.py&quot;&gt;点此&lt;/a&gt;下载&lt;/p&gt;</content><author><name>jessychen</name></author><category term="Python" /><category term="CS" /><category term="MiniProj" /><summary type="html">最近，家有小儿初长成。曾经萌萌哒的Sam小盆友也马上要步入小学生的行列了。为了不输在起跑线上，老母亲决定每天给出100题计算题😏。手动出题太麻烦，肿么办？当然是动手写一个了！用上伟大的Python，分分钟搞定不在话下：</summary></entry><entry><title type="html">Airflow中的路径选择</title><link href="https://jessychen1984.github.io/2020/03/22/python-branch/" rel="alternate" type="text/html" title="Airflow中的路径选择" /><published>2020-03-22T00:00:00+08:00</published><updated>2020-03-22T00:00:00+08:00</updated><id>https://jessychen1984.github.io/2020/03/22/python-branch</id><content type="html" xml:base="https://jessychen1984.github.io/2020/03/22/python-branch/">&lt;blockquote&gt;
+&lt;p&gt;项目代码&lt;a href=&quot;https://github.com/jessychen1984/MiniProj/blob/master/src/misc/calculator.py&quot;&gt;点此&lt;/a&gt;下载&lt;/p&gt;</content><author><name>jessychen</name></author><category term="Python" /><category term="CS" /><category term="MiniProj" /><summary type="html">最近，家有小儿初长成。曾经萌萌哒的Sam小盆友也马上要步入小学生的行列了。为了不输在起跑线上，老母亲决定每天给出100题计算题😏。手动出题太麻烦，肿么办？当然是动手写一个了！用上伟大的Python，分分钟搞定不在话下：</summary></entry><entry><title type="html">Airflow中的路径选择</title><link href="http://localhost:4000/2020/03/22/python-branch/" rel="alternate" type="text/html" title="Airflow中的路径选择" /><published>2020-03-22T00:00:00+08:00</published><updated>2020-03-22T00:00:00+08:00</updated><id>http://localhost:4000/2020/03/22/python-branch</id><content type="html" xml:base="http://localhost:4000/2020/03/22/python-branch/">&lt;blockquote&gt;
   &lt;p&gt;Airflow 是 Airbnb 公司开源的任务调度系统, 通过使用 Python 开发 DAG, 非常方便的调度计算任务。&lt;/p&gt;
 &lt;/blockquote&gt;
 
