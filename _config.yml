@@ -66,6 +66,13 @@ kramdown:
 # Netease settings
 netease_comment: false
 
+gitalk:
+    clientId: '74d564b1bb80db468c1f'
+    secret: 'ac9d9ddf2cc77678e2bee6bc66871afb8f4a137d'
+    repo: 'jessychen1984.github.io'
+    owner: 'jessychen1984'
+    admin: 'jessychen1984'
+
 
 
 # Analytics settings
