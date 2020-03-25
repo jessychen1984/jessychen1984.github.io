@@ -15,8 +15,8 @@ tags:
 ```python
 '''
 A simple python calculation question generator
-usg: python calculator.py -d "+,-" -c 3 -l 200 -t 100
-usg: python calculator.py --op_type="+,-" --op_count=3 --limit=20 --total=100
+usg: python calculator.py -d "+,-" -c 3 -l 200 -t 30
+usg: python calculator.py --op_type="+,-" --op_count=3 --limit=20 --total=30
 '''
 import sys, getopt, random
 
@@ -27,22 +27,27 @@ def auto_cal_generator(limit=100, op_count=1, op_type=["+"], total=100):
         up = limit
         question = ""
         for i in range(0, op_count+1):
-            num = random.randint(1,max(1,min(limit,up))) 
+            num = 0
             if i == 0:
+                num = random.randint(1,max(1,min(limit,up))) 
                 question = "%s%d" % (question, num)
                 up -= num
                 continue
-            op_i = random.randint(0,l)
-            op = op_type[op_i]
-            question = "%s%s%d" % (question, op, num)
+            op = "+"
+            if limit - up > 0:
+                op_i = random.randint(0,l)
+                op = op_type[op_i]
+            question = "%s%s" % (question, op)
             if op =="+":
+                num = random.randint(1,max(1,min(limit,up))) 
                 up -= num
             elif op == "-":
+                num = random.randint(1,max(limit-up, 1)) 
                 up += num
             else:
                 print("operator error: %s" % op)
                 sys.exit(1)
-        
+            question = "%s%d" % (question, num)
         print("%d: %s=" % (j+1, question))
 
 def main(argv=None):
@@ -53,7 +58,6 @@ def main(argv=None):
     op_count = 1
     op_type = ["+"]
     total = 100
-    
     for opt,arg in opts:
         if opt in ["-l", "--limit"]:
             limit = int(arg)
@@ -67,7 +71,7 @@ def main(argv=None):
     auto_cal_generator(limit, op_count, op_type, total)
 
 if __name__ == '__main__':
-    main()  
+    main()
 ```
 
 有了这个神器后，想看电视？想吃冰激凌？想去游乐园？先做30题解锁，用法：

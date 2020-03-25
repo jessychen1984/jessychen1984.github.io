@@ -5,7 +5,7 @@ header-img: img/home-bg.jpg
 email: jessychen@vip.qq.com
 description: "This is KiwiJia's blog"
 keyword: "KiwiJia Blog Computer Science coding software airflow python"
-url: "https://jessychen1984.github.io"  # your host, for absolute URL
+url: "https://kiwijia.work"  # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 # Publish posts or collection documents with a future date.

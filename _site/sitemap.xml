@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-<loc>http://localhost:4000/2020/03/22/python-branch/</loc>
+<loc>https://kiwijia.work/2020/03/22/python-branch/</loc>
 <lastmod>2020-03-22T00:00:00+08:00</lastmod>
 </url>
 <url>
-<loc>http://localhost:4000/2020/03/23/calculate-generator/</loc>
+<loc>https://kiwijia.work/2020/03/23/calculate-generator/</loc>
 <lastmod>2020-03-23T00:00:00+08:00</lastmod>
 </url>
 <url>
-<loc>http://localhost:4000/2020/03/24/sabaki-go/</loc>
+<loc>https://kiwijia.work/2020/03/24/sabaki-go/</loc>
 <lastmod>2020-03-24T00:00:00+08:00</lastmod>
 </url>
 <url>
-<loc>http://localhost:4000/about/</loc>
+<loc>https://kiwijia.work/about/</loc>
 </url>
 <url>
-<loc>http://localhost:4000/archive/</loc>
+<loc>https://kiwijia.work/archive/</loc>
 </url>
 <url>
-<loc>http://localhost:4000/</loc>
+<loc>https://kiwijia.work/</loc>
 </url>
 <url>
-<loc>http://localhost:4000/offline/</loc>
+<loc>https://kiwijia.work/offline/</loc>
 </url>
 </urlset>

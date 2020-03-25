@@ -30,8 +30,8 @@
     <meta property="article:tag" content="MiniProj">
     
     
-    <meta property="og:image" content="http://localhost:4000/img/wechat.jpg">
-    <meta property="og:url" content="http://localhost:4000/2020/03/23/calculate-generator/">
+    <meta property="og:image" content="https://kiwijia.work/img/wechat.jpg">
+    <meta property="og:url" content="https://kiwijia.work/2020/03/23/calculate-generator/">
     <meta property="og:site_name" content="KiwiJia的博客 | KiwiJia Blog">
     
     <title>MiniProj之简单计算题出题器 - KiwiJia的博客 | KiwiJia Blog</title>
@@ -43,7 +43,7 @@
     <link rel="shortcut icon" href="/img/favicon.ico">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="http://localhost:4000/2020/03/23/calculate-generator/">
+    <link rel="canonical" href="https://kiwijia.work/2020/03/23/calculate-generator/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -298,10 +298,14 @@
 53
 54
 55
+56
+57
+58
+59
 </pre></td><td class="rouge-code"><pre><span class="s">'''
 A simple python calculation question generator
-usg: python calculator.py -d "+,-" -c 3 -l 200 -t 100
-usg: python calculator.py --op_type="+,-" --op_count=3 --limit=20 --total=100
+usg: python calculator.py -d "+,-" -c 3 -l 200 -t 30
+usg: python calculator.py --op_type="+,-" --op_count=3 --limit=20 --total=30
 '''</span>
 <span class="kn">import</span> <span class="nn">sys</span><span class="p">,</span> <span class="n">getopt</span><span class="p">,</span> <span class="n">random</span>
 
@@ -312,22 +316,27 @@ usg: python calculator.py --op_type="+,-" --op_count=3 --limit=20 --total=100
         <span class="n">up</span> <span class="o">=</span> <span class="n">limit</span>
         <span class="n">question</span> <span class="o">=</span> <span class="s">""</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">op_count</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">num</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">min</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span><span class="n">up</span><span class="p">)))</span> 
+            <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">num</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">min</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span><span class="n">up</span><span class="p">)))</span> 
                 <span class="n">question</span> <span class="o">=</span> <span class="s">"</span><span class="si">%</span><span class="s">s</span><span class="si">%</span><span class="s">d"</span> <span class="o">%</span> <span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
                 <span class="n">up</span> <span class="o">-=</span> <span class="n">num</span>
                 <span class="k">continue</span>
-            <span class="n">op_i</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">l</span><span class="p">)</span>
-            <span class="n">op</span> <span class="o">=</span> <span class="n">op_type</span><span class="p">[</span><span class="n">op_i</span><span class="p">]</span>
-            <span class="n">question</span> <span class="o">=</span> <span class="s">"</span><span class="si">%</span><span class="s">s</span><span class="si">%</span><span class="s">s</span><span class="si">%</span><span class="s">d"</span> <span class="o">%</span> <span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="s">"+"</span>
+            <span class="k">if</span> <span class="n">limit</span> <span class="o">-</span> <span class="n">up</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">op_i</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">l</span><span class="p">)</span>
+                <span class="n">op</span> <span class="o">=</span> <span class="n">op_type</span><span class="p">[</span><span class="n">op_i</span><span class="p">]</span>
+            <span class="n">question</span> <span class="o">=</span> <span class="s">"</span><span class="si">%</span><span class="s">s</span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">op</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">op</span> <span class="o">==</span><span class="s">"+"</span><span class="p">:</span>
+                <span class="n">num</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">min</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span><span class="n">up</span><span class="p">)))</span> 
                 <span class="n">up</span> <span class="o">-=</span> <span class="n">num</span>
             <span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s">"-"</span><span class="p">:</span>
+                <span class="n">num</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">max</span><span class="p">(</span><span class="n">limit</span><span class="o">-</span><span class="n">up</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> 
                 <span class="n">up</span> <span class="o">+=</span> <span class="n">num</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">print</span><span class="p">(</span><span class="s">"operator error: </span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="n">op</span><span class="p">)</span>
                 <span class="n">sys</span><span class="o">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        
+            <span class="n">question</span> <span class="o">=</span> <span class="s">"</span><span class="si">%</span><span class="s">s</span><span class="si">%</span><span class="s">d"</span> <span class="o">%</span> <span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
         <span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="si">%</span><span class="s">d: </span><span class="si">%</span><span class="s">s="</span> <span class="o">%</span> <span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">question</span><span class="p">))</span>
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -338,7 +347,6 @@ usg: python calculator.py --op_type="+,-" --op_count=3 --limit=20 --total=100
     <span class="n">op_count</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">op_type</span> <span class="o">=</span> <span class="p">[</span><span class="s">"+"</span><span class="p">]</span>
     <span class="n">total</span> <span class="o">=</span> <span class="mi">100</span>
-    
     <span class="k">for</span> <span class="n">opt</span><span class="p">,</span><span class="n">arg</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"-l"</span><span class="p">,</span> <span class="s">"--limit"</span><span class="p">]:</span>
             <span class="n">limit</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
@@ -352,7 +360,7 @@ usg: python calculator.py --op_type="+,-" --op_count=3 --limit=20 --total=100
     <span class="n">auto_cal_generator</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">op_count</span><span class="p">,</span> <span class="n">op_type</span><span class="p">,</span> <span class="n">total</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>  
+    <span class="n">main</span><span class="p">()</span>
 </pre></td></tr></tbody></table></code></pre></div></div>
 
 <p>有了这个神器后，想看电视？想吃冰激凌？想去游乐园？先做30题解锁，用法：</p>
