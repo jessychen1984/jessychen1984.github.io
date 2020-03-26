@@ -206,12 +206,16 @@
 		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 			<div class="mini-post-list js-result">
 				<div class="post-preview item">
+	用Python实现的一个简单出题器，适合小学低年级吞金兽，相关资料见：<br /><a href="/2020/03/23/calculate-generator/">《MiniProj之简单计算题出题器》</a>
+</div>
+<hr>
+<div class="post-preview item">
 	<span>运算符个数:&nbsp;</span><input name="op_count" type="text" maxlength="1" value="1" size="1"/>&nbsp;&nbsp;
 	<span>运算符类型:&nbsp;</span>+&nbsp;<input name="op_type" type="checkbox" value="+" checked/>&nbsp;&nbsp;-&nbsp;<input name="op_type" type="checkbox" value="-"/>&nbsp;&nbsp;
 	<span>最大数字:&nbsp;</span><input name="limit" type="text" maxlength="3" value="100" size="3"/>&nbsp;&nbsp;
 	<span>出题数:&nbsp;</span><input name="total" type="text" maxlength=2 value="30" size="2"/>&nbsp;&nbsp;
-	<button onclick="getQ()" type="button">出题！</button>&nbsp;&nbsp;
-	<button onclick="doPrintCal()" type="button">打印！</button>
+	<button onclick="getQ()" type="button">出题(Go)</button>&nbsp;&nbsp;
+	<button onclick="doPrintCal()" type="button">打印(Print)</button>
 </div>
 <hr>
 <div id="res" class="post-preview item" contenteditable="true">

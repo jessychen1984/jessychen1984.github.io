@@ -107,7 +107,13 @@ service-worker: true
 # MathJax rendering for layout:page (e.g. post preview)
 page-mathjax: false
 
-
+# Suggests
+suggests: [
+    {
+        title: "LAB",
+        href: "/lab"
+    }
+]
 
 # Friends
 #friends: [

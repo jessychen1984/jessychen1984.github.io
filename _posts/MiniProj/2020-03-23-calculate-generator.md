@@ -89,3 +89,11 @@ python calculator.py -d "+,-" -c 3 -l 200 -t 30
 
 项目代码[点此](https://github.com/jessychen1984/MiniProj/blob/master/src/misc/calculator.py)下载
 
+有空又加了个在线演示：[Calculator](/lab/calculator.html) 。支持直接在页面做题，也可打印出来。
+
+懒得判题怎么办？推荐：**学而思培优APP -> 发现 -> 智能判题** 。 果然，懒惰是促进人类发展的第一生产力:laughing:
+
+当然，如果你还没有下载，作为中国亿万焦虑妈妈的必备APP，你也一定要下一个：
+
+![xes](/img/in-post/MiniProj/xes.png)
+

@@ -1,0 +1,9 @@
+{% if site.suggests %}
+<hr>
+<h5>SUGGESTS</h5>
+<ul class="list-inline">
+  {% for suggest in site.suggests %}
+  <li><a href="{{suggest.href}}">{{suggest.title}}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
