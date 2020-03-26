@@ -1,0 +1,20 @@
+---
+title: Calculator
+layout: lab 
+description: Every noble work is at first impossible.
+permalink: /lab/calculator.html
+hide-in-nav: true
+---
+
+<div class="post-preview item">
+	<span>运算符个数:&nbsp;</span><input name="op_count" type="text" maxlength="1" value="1" size="1"/>&nbsp;&nbsp;
+	<span>运算符类型:&nbsp;</span>+&nbsp;<input name="op_type" type="checkbox" value="+" checked/>&nbsp;&nbsp;-&nbsp;<input name="op_type" type="checkbox" value="-"/>&nbsp;&nbsp;
+	<span>最大数字:&nbsp;</span><input name="limit" type="text" maxlength="3" value="100" size="3"/>&nbsp;&nbsp;
+	<span>出题数:&nbsp;</span><input name="total" type="text" maxlength=2 value="30" size="2"/>&nbsp;&nbsp;
+	<button onclick="getQ()" type="button">出题！</button>&nbsp;&nbsp;
+	<button onclick="doPrintCal()" type="button">打印！</button>
+</div>
+<hr>
+<div id="res" class="post-preview item" contenteditable="true">
+</div>
+<hr>

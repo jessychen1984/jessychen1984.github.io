@@ -11,16 +11,16 @@
     <meta name="theme-color" content="#000000">
     
     <!-- Open Graph -->
-    <meta property="og:title" content="Offline - KiwiJia的博客 | KiwiJia Blog">
+    <meta property="og:title" content="Calculator - KiwiJia的博客 | KiwiJia Blog">
     
     <meta property="og:type" content="website">
-    <meta property="og:description" content="The higher I got, the more amazed I was by the view.">
+    <meta property="og:description" content="Every noble work is at first impossible.">
     
     <meta property="og:image" content="https://kiwijia.work/img/wechat.jpg">
-    <meta property="og:url" content="https://kiwijia.work/offline/">
+    <meta property="og:url" content="https://kiwijia.work/lab/calculator.html">
     <meta property="og:site_name" content="KiwiJia的博客 | KiwiJia Blog">
     
-    <title>Offline - KiwiJia的博客 | KiwiJia Blog</title>
+    <title>Calculator - KiwiJia的博客 | KiwiJia Blog</title>
 
     <!-- Web App Manifest -->
     <link rel="manifest" href="/pwa/manifest.json">
@@ -29,7 +29,7 @@
     <link rel="shortcut icon" href="/img/favicon.ico">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://kiwijia.work/offline/">
+    <link rel="canonical" href="https://kiwijia.work/lab/calculator.html">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -189,10 +189,10 @@
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         
-        <div class="site-heading">
+        <div class="site-heading" id="tag-heading">
         
-          <h1>Offline</h1>
-          <span class="subheading">The higher I got, the more amazed I was by the view.</span>
+          <h1>Calculator</h1>
+          <span class="subheading">Every noble work is at first impossible.</span>
         </div>
       </div>
     </div>
@@ -200,9 +200,52 @@
 </header>
 
 
+<!-- Main Content -->
+<div class="container">
+	<div class="row">
+		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+			<div class="mini-post-list js-result">
+				<div class="post-preview item">
+	<span>运算符个数:&nbsp;</span><input name="op_count" type="text" maxlength="1" value="1" size="1"/>&nbsp;&nbsp;
+	<span>运算符类型:&nbsp;</span>+&nbsp;<input name="op_type" type="checkbox" value="+" checked/>&nbsp;&nbsp;-&nbsp;<input name="op_type" type="checkbox" value="-"/>&nbsp;&nbsp;
+	<span>最大数字:&nbsp;</span><input name="limit" type="text" maxlength="3" value="100" size="3"/>&nbsp;&nbsp;
+	<span>出题数:&nbsp;</span><input name="total" type="text" maxlength=2 value="30" size="2"/>&nbsp;&nbsp;
+	<button onclick="getQ()" type="button">出题！</button>&nbsp;&nbsp;
+	<button onclick="doPrintCal()" type="button">打印！</button>
+</div>
+<hr>
+<div id="res" class="post-preview item" contenteditable="true">
+</div>
+<hr>
+
+			</div>
+			
+			<div id="gitalk-container"></div>
+			
+		</div>
+	</div>
+</div>
+<script src="/js/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+<script src="/js/cloud.min.js"></script>
+<!-- gitalk -->
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
 <script>
-	document.body.classList.add('page-fullscreen');
+	const gitalk = new Gitalk({
+	clientID: '74d564b1bb80db468c1f',
+	clientSecret: 'ac9d9ddf2cc77678e2bee6bc66871afb8f4a137d',
+	repo: 'jessychen1984.github.io',
+	owner: 'jessychen1984',
+	admin: ['jessychen1984'],
+	id: location.pathname, 
+	distractionFreeMode: true,  // Facebook-like distraction free mode
+	language: 'zh-CN'
+	})
+
+	gitalk.render('gitalk-container')
 </script>
+
 
 
     <!-- Footer -->
