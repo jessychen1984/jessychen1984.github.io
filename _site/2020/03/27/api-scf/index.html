@@ -262,10 +262,10 @@
 				<blockquote>
   <ul>
     <li>
-      <p>云函数（Serverless Cloud Function，SCF）是腾讯云为企业和开发者们提供的无服务器执行环境，帮助您在无需购买和管理服务器的情况下运行代码。</p>
+      <p><a href="https://cloud.tencent.com/act/cps/redirect?redirect=10285&amp;cps_key=a513604ea4a22c6246779fede501e4b6">云函数</a>（Serverless Cloud Function，SCF）是腾讯云为企业和开发者们提供的无服务器执行环境，帮助您在无需购买和管理服务器的情况下运行代码。</p>
     </li>
     <li>
-      <p>API 网关（API Gateway）是 API 托管服务，提供 API 的完整生命周期管理，包括创建、维护、发布、运行、下线等。</p>
+      <p><a href="https://cloud.tencent.com/act/cps/redirect?redirect=10285&amp;cps_key=a513604ea4a22c6246779fede501e4b6">API 网关</a>（API Gateway）是 API 托管服务，提供 API 的完整生命周期管理，包括创建、维护、发布、运行、下线等。</p>
     </li>
   </ul>
 </blockquote>
@@ -274,7 +274,7 @@
 
 <p>作为一个行动派加居(yang)家(mao)派，我目标锁定了用<strong>SCF+API</strong>的方式，也就是现在很🔥的serveless方案。最大的好处当然是不用再伺候服务器了，少了很多搭建的麻烦。而且这个按实际使用量计费，对于<del>没什么人来的</del>小网站再适合不过了。</p>
 
-<p>说完废话，下面介绍下要怎么实现了。首先，你要有个<a href="https://cloud.tencent.com/">腾讯云</a>账号，然后参考👇的简单步骤：</p>
+<p>说完废话，下面介绍下要怎么实现了。首先，你要有个<a href="https://cloud.tencent.com/act/cps/redirect?redirect=11529&amp;cps_key=a513604ea4a22c6246779fede501e4b6">腾讯云</a>账号，然后参考👇的简单步骤：</p>
 
 <ol>
   <li><a href="#scf">创建云函数SCF</a>。</li>
@@ -288,7 +288,7 @@
 
 <h3 id="创建云函数scf"><a id="scf">创建云函数SCF</a></h3>
 
-<p>照着这个文档 <a href="https://cloud.tencent.com/document/product/583/9179">云函数快速入门</a> 按里面的步骤来创建自己业务函数。第一次可以选择使用控制台创建函数，运行环境中选择自己熟悉的编程语言，当前支持<strong>python, php, golang, java, nodejs</strong>几种，然后就可以在<strong>函数代码</strong>下愉快的开始了。这里以运行环境<strong>Python3.6</strong>为例。默认的入口函数是<code class="highlighter-rouge">index.main_handler</code>，有两个输入参数:</p>
+<p>照着这个文档 <a href="https://cloud.tencent.com/act/cps/redirect?redirect=11835&amp;cps_key=a513604ea4a22c6246779fede501e4b6">云函数快速入门</a> 按里面的步骤来创建自己业务函数。第一次可以选择使用控制台创建函数，运行环境中选择自己熟悉的编程语言，当前支持<strong>python, php, golang, java, nodejs</strong>几种，然后就可以在<strong>函数代码</strong>下愉快的开始了。这里以运行环境<strong>Python3.6</strong>为例。默认的入口函数是<code class="highlighter-rouge">index.main_handler</code>，有两个输入参数:</p>
 
 <ul>
   <li>event：可以获取触发源的消息 - <strong>主要用来获取传入参数</strong>。</li>
@@ -417,7 +417,7 @@
 
 <h3 id="创建api-gateway"><a id="api">创建API gateway</a></h3>
 
-<p>云函数SCF写完后，如果想要能通过网络http(s)请求直接访问，就要为其添加触发方式为<strong>API网关触发器</strong>。同时强烈建议将鉴权方法置为<strong>API网关密钥对</strong>。然后就会在API gateway下自动创建出一个对应的service API。这一步如果遇到权限问题无法自动创建API的话，也不要着急，可以直接在API gateway的控制台操作，参考这里：<a href="https://cloud.tencent.com/document/product/628/41654">API网关快速入门</a>。</p>
+<p>云函数SCF写完后，如果想要能通过网络http(s)请求直接访问，就要为其添加触发方式为<strong>API网关触发器</strong>。同时强烈建议将鉴权方法置为<strong>API网关密钥对</strong>。然后就会在API gateway下自动创建出一个对应的service API。这一步如果遇到权限问题无法自动创建API的话，也不要着急，可以直接在API gateway的控制台操作，参考这里：<a href="https://cloud.tencent.com/act/cps/redirect?redirect=11836&amp;cps_key=a513604ea4a22c6246779fede501e4b6">API网关快速入门</a>。</p>
 
 <p>创建API时注意将鉴权类型改成<strong>密钥对</strong>。下方有个<strong>支持CORS</strong>的选项，如果需要跨域访问就勾上，反之可以忽略。设置完需要接收的参数后，在下一步的<strong>后端配置</strong>中选后端类型为<strong>cloud function</strong>后，选中刚建好的云函数，就做好了这两者的关联。</p>
 
@@ -431,7 +431,7 @@
 
 <h3 id="前端调用"><a id="front">前端调用</a></h3>
 
-<p>配置完后端服务后，要解决的就是访问的问题了。由于没钱供服务器，用的是静态页面托管的方式建的站。前端直接ajax访问API来获取结果。参考文档在此：<a href="https://cloud.tencent.com/document/product/628/11819">密钥对认证</a>，<a href="https://cloud.tencent.com/document/product/628/42189">如何生成签名</a>（里面给出了用不同语言生成签名的例子）。</p>
+<p>配置完后端服务后，要解决的就是访问的问题了。由于没钱供服务器，用的是静态页面托管的方式建的站。前端直接ajax访问API来获取结果。参考文档在此：<a href="https://cloud.tencent.com/act/cps/redirect?redirect=11837&amp;cps_key=a513604ea4a22c6246779fede501e4b6">密钥对认证</a>，<a href="https://cloud.tencent.com/act/cps/redirect?redirect=11838&amp;cps_key=a513604ea4a22c6246779fede501e4b6">如何生成签名</a>（里面给出了用不同语言生成签名的例子）。</p>
 
 <p>由于没写前端好多年，对前端的认知还停留在js和jquery阶段，这里只能给出改好的jquery写法。用的是<a href="https://github.com/brix/crypto-js">crypto-js</a>加密。</p>
 
@@ -525,7 +525,7 @@
 
 <p>如果在前面创建API gateway的service时候没有指定自定义域名，或是自定义域名和调用页面的域名不是同一个，就会涉及到<strong>跨域</strong>的问题。解决跨域问题传统的方法可以用<strong>jsonp</strong>。但它没办法在request的Header里加参数，也就传不了鉴权所需的字段。所以这里只能用<strong>CORS</strong>来解决跨域：</p>
 
-<p>对于服务端，只要前面建API的时候勾选了<strong>支持CORS</strong>选项，就会自动开启，参考<a href="https://cloud.tencent.com/document/product/628/11939">API控制台相关问题</a> 。对于客户端，在ajax参数中设置<code class="highlighter-rouge">crossDomain: true</code>就可以了。</p>
+<p>对于服务端，只要前面建API的时候勾选了<strong>支持CORS</strong>选项，就会自动开启，参考<a href="https://cloud.tencent.com/act/cps/redirect?redirect=11839&amp;cps_key=a513604ea4a22c6246779fede501e4b6">API控制台相关问题</a> 。对于客户端，在ajax参数中设置<code class="highlighter-rouge">crossDomain: true</code>就可以了。</p>
 
 <h3 id="完成"><a id="finish">完成</a></h3>
 
