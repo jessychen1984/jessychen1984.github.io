@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://kiwijia.work/feed.xml" rel="self" type="application/atom+xml" /><link href="https://kiwijia.work/" rel="alternate" type="text/html" /><updated>2020-03-28T00:00:02+08:00</updated><id>https://kiwijia.work/feed.xml</id><title type="html">KiwiJia Blog</title><subtitle>This is KiwiJia's blog</subtitle><entry><title type="html">静态网站利用SCF+API访问自定义后端接口</title><link href="https://kiwijia.work/2020/03/27/api-scf/" rel="alternate" type="text/html" title="静态网站利用SCF+API访问自定义后端接口" /><published>2020-03-27T00:00:00+08:00</published><updated>2020-03-27T00:00:00+08:00</updated><id>https://kiwijia.work/2020/03/27/api-scf</id><content type="html" xml:base="https://kiwijia.work/2020/03/27/api-scf/">&lt;blockquote&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://kiwijia.work/feed.xml" rel="self" type="application/atom+xml" /><link href="https://kiwijia.work/" rel="alternate" type="text/html" /><updated>2020-03-28T00:02:16+08:00</updated><id>https://kiwijia.work/feed.xml</id><title type="html">KiwiJia Blog</title><subtitle>This is KiwiJia's blog</subtitle><entry><title type="html">静态网站利用SCF+API访问自定义后端接口</title><link href="https://kiwijia.work/2020/03/27/api-scf/" rel="alternate" type="text/html" title="静态网站利用SCF+API访问自定义后端接口" /><published>2020-03-27T00:00:00+08:00</published><updated>2020-03-27T00:00:00+08:00</updated><id>https://kiwijia.work/2020/03/27/api-scf</id><content type="html" xml:base="https://kiwijia.work/2020/03/27/api-scf/">&lt;blockquote&gt;
   &lt;ul&gt;
     &lt;li&gt;
       &lt;p&gt;&lt;a href=&quot;https://cloud.tencent.com/act/cps/redirect?redirect=10232&amp;amp;cps_key=a513604ea4a22c6246779fede501e4b6&quot;&gt;云函数&lt;/a&gt;（Serverless Cloud Function，SCF）是腾讯云为企业和开发者们提供的无服务器执行环境，帮助您在无需购买和管理服务器的情况下运行代码。&lt;/p&gt;
@@ -166,7 +166,7 @@
 
 &lt;p&gt;然后，就来到了相当重要但也容易被忽略的访问控制这步。在前面我们已经选择了&lt;strong&gt;密钥对&lt;/strong&gt;的方式作为鉴权类型。虽然有密钥泄露的风险，但对于小网站来说这个验证也是足够了，记得保存好密钥并定期修改就好。&lt;/p&gt;
 
-&lt;p&gt;然后的步骤就是创建密钥对，创建&lt;strong&gt;使用计划&lt;/strong&gt;绑定密钥对，再把使用计划绑定服务或API。下面直接甩出文档：&lt;a href=&quot;https://cloud.tencent.com/document/product/628/11816&quot;&gt;使用计划&lt;/a&gt;。使用计划中除了可以绑定密钥对，还可以进行流量控制，可按需设置。&lt;/p&gt;
+&lt;p&gt;然后的步骤就是创建密钥对，创建&lt;strong&gt;使用计划&lt;/strong&gt;绑定密钥对，再把使用计划绑定服务或API。下面直接甩出文档：&lt;a href=&quot;https://cloud.tencent.com/act/cps/redirect?redirect=11840&amp;amp;cps_key=a513604ea4a22c6246779fede501e4b6&quot;&gt;使用计划&lt;/a&gt;。使用计划中除了可以绑定密钥对，还可以进行流量控制，可按需设置。&lt;/p&gt;
 
 &lt;h3 id=&quot;前端调用&quot;&gt;&lt;a id=&quot;front&quot;&gt;前端调用&lt;/a&gt;&lt;/h3&gt;
 
