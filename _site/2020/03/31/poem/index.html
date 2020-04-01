@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="This is KiwiJia's blog">
+    <meta name="keywords"  content="KiwiJia Blog Computer Science coding software airflow python">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="MiniProj之古诗词检索 - KiwiJia的博客 | KiwiJia Blog">
+    
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="
+  The most comprehensive database of Chinese poetry
+
+  包含 5.5 万首唐诗、26 万首宋诗、2.1 万首宋词和其他古典文集。诗人包括唐宋两朝近 1.4 万古诗人，和两宋时期 1.5 千古词人。此数据库通过 JSON 格式分发，可以让你很方便的开始你的项目。
+
+">
+    
+    <meta property="article:published_time" content="2020-03-31T00:00:00Z">
+    
+    
+    <meta property="article:author" content="jessychen">
+    
+    
+    <meta property="article:tag" content="Python">
+    
+    <meta property="article:tag" content="CS">
+    
+    <meta property="article:tag" content="MiniProj">
+    
+    
+    <meta property="og:image" content="https://kiwijia.work/img/wechat.jpg">
+    <meta property="og:url" content="https://kiwijia.work/2020/03/31/poem/">
+    <meta property="og:site_name" content="KiwiJia的博客 | KiwiJia Blog">
+    
+    <title>MiniProj之古诗词检索 - KiwiJia的博客 | KiwiJia Blog</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://kiwijia.work/2020/03/31/poem/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top invert">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">KiwiJia Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/lab/">Lab</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/home-bg.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+
+
+
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/home-bg.jpg');
+        background: ;
+    }
+
+    
+</style>
+
+<header class="intro-header style-text" >
+
+    <div class="header-mask"></div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/archive/?tag=Python" title="Python">Python</a>
+                        
+                        <a class="tag" href="/archive/?tag=CS" title="CS">CS</a>
+                        
+                        <a class="tag" href="/archive/?tag=MiniProj" title="MiniProj">MiniProj</a>
+                        
+                    </div>
+                    <h1>MiniProj之古诗词检索</h1>
+                    
+                    <h2 class="subheading">A simple retrieval for Chinese Ancient Poems by python</h2>
+                    <span class="meta">Posted by jessychen on March 31, 2020</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <!-- Multi-Lingual -->
+                
+
+				<blockquote>
+  <p>The most comprehensive database of Chinese poetry</p>
+
+  <p>包含 5.5 万首唐诗、26 万首宋诗、2.1 万首宋词和其他古典文集。诗人包括唐宋两朝近 1.4 万古诗人，和两宋时期 1.5 千古词人。此数据库通过 JSON 格式分发，可以让你很方便的开始你的项目。</p>
+</blockquote>
+
+<p>Github上有不少宝藏项目，比如👆这个：最全中华古诗词库 - <a href="https://github.com/chinese-poetry/chinese-poetry">chinese-poetry</a>。前几天基于这个宝库写了个检索的的小程序，这里做下开发过程的记录。</p>
+
+<ol>
+  <li><a href="#技术分析">技术分析</a></li>
+  <li><a href="#实现">实现</a></li>
+  <li><a href="# 演示">演示</a></li>
+  <li><a href="# 后记">后记</a></li>
+</ol>
+
+<h3 id="技术分析">技术分析</h3>
+
+<p>作为一名10后。。。。。。的老母亲，学校经常会留一些古诗词背诵的作业给孩子。可是，作为一名与高考脱节几十年的纯理工科生，好多诗我真是见都没见过<del>（其实是还给老师了）</del>。这时候，总是特别羡慕那些学富五车的家长，孩子提问时各种诗词文学典故信手拈来。不像我，只能巴巴的求助百度，有时候还出来一堆不靠谱的结果😭。不过好在<strong>知识不够，技术来凑</strong>，刚好发现这么个诗词宝库，怎能暴殄天物呢？</p>
+
+<p>有了动手写一个诗词检索的想法，自然是要行动的。立刻把code下到本地，看下数据size。嗯，不是特别大，这样要是自己用用的话直接解析文件就可以了：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre>100K	./youmengying <span class="c">#幽梦影</span>
+ 15M	./ci  <span class="c">#宋词</span>
+348K	./wudai  <span class="c">#五代</span>
+143M	./json   <span class="c">#全唐诗</span>
+172K	./sishuwujing  <span class="c">#四书五经</span>
+ 72K	./lunyu   <span class="c">#论语</span>
+160K	./shijing  <span class="c">#诗经</span>
+1.0M	./mengxue   <span class="c">#蒙学</span>
+4.0M	./yuanqu    <span class="c">#元曲</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>再看下目录下的文件，根据数据大小，有的被切分成了多个文件，例如<code class="highlighter-rouge">json</code>,<code class="highlighter-rouge">ci</code>，有的占地不大的就只保留了一个，例如<code class="highlighter-rouge">shijing</code>,<code class="highlighter-rouge">yuanqu</code>。打开文件看看，都是标准的json格式，拿诗仙的看看，其他的也差不多，除了不同类型文件的key可能不同外：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="rouge-code"><pre><span class="w">  </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">"李白"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"paragraphs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="s2">"雲想衣裳花想容，春風拂檻露華濃。"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"若非羣玉山頭見，會向瑤臺月下逢。"</span><span class="w">
+        </span><span class="p">],</span><span class="w">
+        </span><span class="nl">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="s2">"唐诗三百首"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"女子"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"乐府"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"赞美"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"近代曲辞"</span><span class="w">
+        </span><span class="p">],</span><span class="w">
+        </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"雜曲歌辭 清平調 一"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b5f1094b-b9be-43cf-8e04-9b984642a630"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>发现没？全唐诗的目录下是繁体字，但其实并不是所有文件都是繁体，像宋词的数据作者已经转成简体了。至于为什么全唐诗保留的数据要是繁体，作者给出的解释是：</p>
+
+<blockquote>
+  <p>目前还没有计划做简体中文数据库。一对一繁简转换有很多工具可以做， 由于简体字的删减在某些诗词场景下通过一对一的转换是有问题的。 比如“发财”繁体是“發財”，而“理发”繁体应是“理髮”. 更多的人名不太容易避免。</p>
+</blockquote>
+
+<p>检查完文件，再列一下这次的需求，很简单：</p>
+
+<ol>
+  <li>输入一个标题，或者作者，或者里面的一句话把对应的内容给检索出来</li>
+  <li>检索到多个匹配项时，优先返回全部匹配的，随后返回部分匹配的，并在查询时给定需要最多返回的条数</li>
+  <li>因为有时候我只想随便看看，有随机取篇内容返回的功能</li>
+  <li>为了对小盆友友好，把返回的格式转成简体</li>
+</ol>
+
+<h3 id="实现">实现</h3>
+
+<p>这次的实现，依然选择了python，原因自然是因为方(tou)便(lan)。</p>
+
+<h4 id="确定接口">确定接口</h4>
+
+<p>首先，要定义检索接口。根据需求，能够多维度的检索，但不同类型文件的json字段key不同，所以自然想到用<code class="highlighter-rouge">dict</code>作为检索条件的传递<code class="highlighter-rouge">index_json</code>，也方便以后的扩展。另外检索前最好能指定类型<code class="highlighter-rouge">peom_type</code>（是唐诗，还是宋词，还是诗经。。。），检索后能指定一个返回条目数<code class="highlighter-rouge">count</code>。当然，有<strong>随机看看</strong>这种设定的存在，输入参数自然不是必须的。这样，就确定了函数定义：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="c1">#index is a dict json str, like: '{"author":"李白", "title":"静夜思"}'
+</span><span class="k">def</span> <span class="nf">get_poem</span><span class="p">(</span><span class="n">poem_type</span><span class="o">=</span><span class="s">""</span><span class="p">,</span> <span class="n">index_json</span><span class="o">=</span><span class="s">""</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+  <span class="o">......</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h4 id="输入处理">输入处理</h4>
+
+<p>接下来，是对输入做处理，包括：</p>
+
+<p>根据诗词类型生成路径，没有指定类型的给随机确定一个</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre>   <span class="k">if</span> <span class="ow">not</span> <span class="n">poem_type</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">poem_type_list</span><span class="p">))</span>
+        <span class="n">poem_type</span> <span class="o">=</span> <span class="n">poem_type_list</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">poem_type</span> <span class="o">=</span> <span class="n">poem_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">poem_path</span> <span class="o">=</span> <span class="s">"</span><span class="si">%</span><span class="s">s/</span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="p">(</span><span class="n">poem_path_prefix</span><span class="p">,</span> <span class="n">poem_type</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>由于某些数据是繁体字（如全唐诗），在检索繁体数据时我们要将输入<code class="highlighter-rouge">index_json</code>转成繁体。这里用了个轻量级的繁简体转换库<a href="https://github.com/skydark/nstools/tree/master/zhtools">zhtools</a>，只要两个python文件，就能实现简单的转换。并把输入的检索条件由<code class="highlighter-rouge">str</code>转成<code class="highlighter-rouge">dict</code></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre>    <span class="n">indexs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">poem_type</span> <span class="ow">in</span> <span class="n">traditional_data</span> <span class="ow">and</span> <span class="n">index_json</span><span class="p">:</span>
+        <span class="n">index_json</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="n">index_json</span><span class="p">,</span> <span class="s">"t"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">index_json</span><span class="p">:</span>
+        <span class="n">indexs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">index_json</span><span class="p">)</span>
+        
+<span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">tp</span><span class="o">=</span><span class="s">"s"</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Converter</span><span class="p">(</span><span class="s">'zh-han</span><span class="si">%</span><span class="s">s'</span> <span class="o">%</span> <span class="n">tp</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h4 id="数据预处理">数据预处理</h4>
+
+<p>像全唐诗这种由于数据量大而被分成多个json文件的，如果传了检索条件进来的话可以先做个简单的筛选来减少load的文件数目，毕竟如果遍历所有条目来查找的话，python的效率还是挺感人的。这里调用了<code class="highlighter-rouge">grep</code>来做简单的筛选。做完这步后，就能得到一个<code class="highlighter-rouge">file_list</code>，里面存的是python需要load的json文件列表。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="rouge-code"><pre>    <span class="n">file_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">indexs</span> <span class="ow">and</span> <span class="n">poem_type</span> <span class="ow">in</span> <span class="n">grep_poems</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indexs</span><span class="p">:</span>
+            <span class="n">grep_cmd</span> <span class="o">=</span> <span class="s">""</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"content"</span><span class="p">,</span> <span class="s">"paragraphs"</span><span class="p">]:</span>
+                <span class="n">grep_cmd</span> <span class="o">=</span> <span class="s">"grep -rl </span><span class="se">\"\\\"</span><span class="si">%</span><span class="s">s</span><span class="se">\\\"</span><span class="s">.*</span><span class="si">%</span><span class="s">s</span><span class="se">\"</span><span class="s"> </span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">indexs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">poem_path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">grep_cmd</span> <span class="o">=</span> <span class="s">"grep -rl </span><span class="se">\"</span><span class="si">%</span><span class="s">s</span><span class="se">\"</span><span class="s"> </span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="p">(</span><span class="n">indexs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">poem_path</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">grep_cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+            <span class="n">file_list</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">file_list</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">poem_path</span><span class="p">)</span>
+        <span class="n">file_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">poem_path</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">]</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h4 id="检索">检索</h4>
+
+<p>到了最重要的检索这一步，其实相当简单。就是遍历这把json文件load进来，然后挨个匹配。需要注意的是数据文件中某些字段的值是个<code class="highlighter-rouge">list</code>，如<code class="highlighter-rouge">content</code>, <code class="highlighter-rouge">paragraghs</code>之类，在查找的时候就不能粗暴的直接比较，而要遍历去看。同时，为了应对标题或内容只记得大概的场景，对每个条件还做了模糊比配。由于能力有限，这里的模糊匹配就是<code class="highlighter-rouge">contains</code>操作。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+</pre></td><td class="rouge-code"><pre>    <span class="n">poem_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">poem_contain_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">".json"</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">poems</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="s">"r"</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">indexs</span><span class="p">:</span>
+            <span class="n">poem_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">poems</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">poem</span> <span class="ow">in</span> <span class="n">poems</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">is_match</span><span class="p">(</span><span class="n">poem</span><span class="p">,</span> <span class="n">indexs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">poem_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">poem</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">match</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">poem_contain_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">poem</span><span class="p">)</span>
+                
+<span class="c1">#retrun value: 0, no match; 1, contain match; 2, all match
+</span><span class="k">def</span> <span class="nf">is_match</span><span class="p">(</span><span class="n">poem</span><span class="p">,</span> <span class="n">indexs</span><span class="p">):</span>
+    <span class="n">match_level_final</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indexs</span><span class="p">:</span>
+        <span class="n">match_level</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">poem</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">poem</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">current_level</span> <span class="o">=</span> <span class="n">is_match_str</span><span class="p">(</span><span class="n">indexs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">p</span><span class="p">)</span>
+                <span class="n">match_level</span> <span class="o">=</span> <span class="n">current_level</span> <span class="k">if</span> <span class="n">match_level</span> <span class="o">&lt;</span> <span class="n">current_level</span> <span class="k">else</span> <span class="n">match_level</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">match_level</span> <span class="o">=</span> <span class="n">is_match_str</span><span class="p">(</span><span class="n">indexs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">poem</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">match_level</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">match_level_final</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">break</span>
+        <span class="n">match_level_final</span> <span class="o">=</span> <span class="n">match_level</span> <span class="k">if</span> <span class="n">match_level</span> <span class="o">&lt;</span> <span class="n">match_level_final</span> <span class="k">else</span> <span class="n">match_level_final</span>
+    <span class="k">return</span> <span class="n">match_level_final</span>
+  
+<span class="k">def</span> <span class="nf">is_match_str</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">original</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">original</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">query</span> <span class="o">!=</span> <span class="n">original</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="mi">2</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h4 id="返回">返回</h4>
+
+<p>检索完成后，会得到<code class="highlighter-rouge">poem_list</code>和<code class="highlighter-rouge">poem_contain_list</code>两个匹配的list。最后的工作就是根据指定的条数从这两个list里按优先级加随机取得需要的记录。然后看情况做个繁体到简体的转换，注意下编码的问题，就大功告成了！其中，方法<code class="highlighter-rouge">convertAll</code>可以将<code class="highlighter-rouge">str</code>,<code class="highlighter-rouge">dict</code>,和<code class="highlighter-rouge">list</code>对象中的汉字做繁简转换。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+</pre></td><td class="rouge-code"><pre>    <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">poem_list</span><span class="p">):</span>
+        <span class="n">poem_list</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">poem_list</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">count</span> <span class="o">-=</span> <span class="nb">len</span><span class="p">(</span><span class="n">poem_list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">poem_contain_list</span><span class="p">):</span>
+            <span class="n">poem_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">poem_contain_list</span><span class="p">,</span> <span class="n">count</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">poem_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">poem_contain_list</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">poem_type</span> <span class="ow">in</span> <span class="n">traditional_data</span><span class="p">:</span>
+        <span class="n">poem_list</span> <span class="o">=</span> <span class="n">convertAll</span><span class="p">(</span><span class="n">poem_list</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">poem_list</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+  
+<span class="k">def</span> <span class="nf">convertAll</span><span class="p">(</span><span class="n">in_obj</span><span class="p">,</span> <span class="n">tp</span><span class="o">=</span><span class="s">"s"</span><span class="p">):</span>
+    <span class="n">in_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">in_obj</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">in_type</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">convert</span><span class="p">(</span><span class="n">in_obj</span><span class="p">,</span> <span class="n">tp</span><span class="p">)</span>
+    <span class="n">out_obj</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">in_type</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">out_obj</span><span class="o">=</span><span class="p">[]</span>
+    <span class="k">elif</span> <span class="n">in_type</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">out_obj</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"in obj type is not list or dict: </span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="n">in_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out_obj</span>
+    <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">in_obj</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">in_type</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="n">out_obj</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">convertAll</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">tp</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">in_type</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="n">out_obj</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span> <span class="o">=</span> <span class="n">convertAll</span><span class="p">(</span><span class="n">in_obj</span><span class="p">[</span><span class="n">obj</span><span class="p">],</span> <span class="n">tp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out_obj</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>返回的<code class="highlighter-rouge">out_obj</code>里就是我们需要的内容了👏</p>
+
+<h3 id="演示">演示</h3>
+
+<p>完成这么一项大工程当然少不了演(de)示(se)一番。先试试诗仙的<strong>静夜思</strong>吧：</p>
+
+<p><code class="highlighter-rouge">python3 poem.py -t "tang" -i '{"title":"静夜思"}'  -c 1</code></p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="p">[{</span><span class="w">
+	</span><span class="nl">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">"李白"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"paragraphs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"牀前看月光，疑是地上霜。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"举头望山月，低头思故乡。"</span><span class="p">],</span><span class="w">
+	</span><span class="nl">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"唐诗三百首"</span><span class="p">,</span><span class="w"> </span><span class="s2">"新乐府辞"</span><span class="p">,</span><span class="w"> </span><span class="s2">"思乡"</span><span class="p">,</span><span class="w"> </span><span class="s2">"中秋"</span><span class="p">,</span><span class="w"> </span><span class="s2">"一年级上册"</span><span class="p">,</span><span class="w"> </span><span class="s2">"月亮"</span><span class="p">,</span><span class="w"> </span><span class="s2">"五言绝句"</span><span class="p">,</span><span class="w"> </span><span class="s2">"小学古诗"</span><span class="p">],</span><span class="w">
+	</span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"静夜思"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ca2c489a-e433-4c0f-8248-77d354f0665e"</span><span class="w">
+</span><span class="p">}]</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>呃。。。怎么和想象的不太一样？？赶紧网上去查查，才知道最早记载的宋代版本确实是上面这四句。然后经过广大劳动人民的多次改编，就成了现在课本里的这一种了😂。。。真是又长见识了。</p>
+
+<p>再试一个宋词看看吧，来个熟悉的，东坡先生的<strong>水调歌头</strong> <em>（注意，宋词只有词牌名，没有标题，我们课本里的标题都是后人加上去的）</em>：</p>
+
+<p><code class="highlighter-rouge">python3 poem.py -t "song" -i '{"author":"苏轼", "rhythmic":"水调歌头"}'  -c 10</code></p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="rouge-code"><pre><span class="p">[{</span><span class="w">
+	</span><span class="nl">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">"苏轼"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"paragraphs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"落日绣帘卷，亭下水连空。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"知君为我，新作窗户湿青红。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"长记平山堂上，枕江南烟雨，渺渺没孤鸿。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"认得醉翁语，山色有无中。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"一千顷，都镜净，倒碧峰。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"忽然浪起，掀舞一叶白头翁。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"堪笑兰台公子，未解庄生天籁，刚道有雌雄。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"一点浩然气，千里快哉风。"</span><span class="p">],</span><span class="w">
+	</span><span class="nl">"rhythmic"</span><span class="p">:</span><span class="w"> </span><span class="s2">"水调歌头"</span><span class="w">
+</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+	</span><span class="nl">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">"苏轼"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"paragraphs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"安石在东海，从事鬓惊秋。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"中年亲友难别，丝竹缓离愁。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"一旦功成名遂，准拟东还海道，扶病入西州。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"雅志困轩冕，遗恨寄沧洲。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"岁云暮，须早计，要褐裘。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"故乡归去千里，佳处辄迟留。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"我醉歌时君和，醉倒须君扶我，惟酒可忘忧。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"一任刘玄德，相对卧高楼。"</span><span class="p">],</span><span class="w">
+	</span><span class="nl">"rhythmic"</span><span class="p">:</span><span class="w"> </span><span class="s2">"水调歌头"</span><span class="w">
+</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+	</span><span class="nl">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">"苏轼"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"paragraphs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"明月几时有，把酒问青天。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"不知天上宫阙，今夕是何年。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"我欲乘风归去，又恐琼楼玉宇，高处不胜寒。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"起舞弄清影，何似在人间。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"转朱阁，低绮户，照无眠。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"不应有恨，何事长向别时圆。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"人有悲欢离合，月有阴晴圆缺，此事古难全。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"但愿人长久，千里共婵娟。"</span><span class="p">],</span><span class="w">
+	</span><span class="nl">"rhythmic"</span><span class="p">:</span><span class="w"> </span><span class="s2">"水调歌头"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"宋词三百首"</span><span class="p">]</span><span class="w">
+</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+	</span><span class="nl">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">"苏轼"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"paragraphs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"昵昵儿女语，灯火夜微明。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"恩冤尔汝来去，弹指泪和声。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"忽变轩昂勇士，一鼓填然作气，千里不留行。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"回首暮云远，飞絮搅青冥。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"众禽里，真彩凤，独不鸣。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"跻攀寸步千险，一落百寻轻。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"烦子指间风雨，置我肠中冰炭，起坐不能平。"</span><span class="p">,</span><span class="w"> </span><span class="s2">"推手从归去，无泪与君倾。"</span><span class="p">],</span><span class="w">
+	</span><span class="nl">"rhythmic"</span><span class="p">:</span><span class="w"> </span><span class="s2">"水调歌头"</span><span class="w">
+</span><span class="p">}]</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>哇，原来苏轼写过这么多<strong>水调歌头</strong>呢。当然王菲唱过的那首最有名，选自<strong>宋词三百首</strong>。</p>
+
+<h3 id="后记">后记</h3>
+
+<p>其实，项目中用到的诗词文件只是这个库里的一部分内容，它还提供了诗词作者的简介，不同条目在各个搜索引擎中的热度，全唐诗的平仄读音，等等。。。诗词检索只是个最基本的使用，我们还能做的更多，例如：</p>
+
+<ul>
+  <li>诗词填空考试，闯关，PK……各种小游戏，玩中掌握传统文化</li>
+  <li>和文字转语音结合起来做个自动读诗程序，把每天的睡前故事改成睡前读诗，文化熏陶从小做起</li>
+  <li>自动写诗AI，写作没有灵感怎么办？AI助手来帮你</li>
+</ul>
+
+<p>没有做不到，只有想不到😜</p>
+
+<p>当然，直接读文件的效率也是个问题。不过不用担心这个，热心网友也写了把文件导入数据库之类的工具，上github上直接拿来用就行。</p>
+
+<p>只有后端的诗词检索用起来还是不方便的，回头还是要记个<strong>TODO</strong>把查询页面补上！</p>
+
+<p>完整代码传送：<a href="https://github.com/jessychen1984/MiniProj/tree/master/src/misc/poems">poem</a></p>
+
+
+
+                <hr >
+				<p><b>本文作者：</b>Jessychen<br /><b>版权声明：</b>本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC-BY-NC-SA 4.0 Int'l</a>许可协议<br /><b>如需转载，烦请注明出处: </b><span id="ref" style="color: #337ab7" /></p>
+                <hr style="visibility: hidden;">
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2020/03/27/api-scf/" data-toggle="tooltip" data-placement="top" title="静态网站利用SCF+API访问自定义后端接口">
+                        Previous<br>
+                        <span>静态网站利用SCF+API访问自定义后端接口</span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+                <hr style="visibility: hidden;">
+
+                
+
+                
+				
+				
+					<div id="gitalk-container"></div>
+                
+
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+        <hr class="hidden-sm hidden-xs">
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        </a>
+        
+        
+                <a data-sort="0004" 
+                    href="/archive/?tag=Airflow"
+                    title="Airflow"
+                    rel="1">Airflow</a>
+        
+                <a data-sort="0001" 
+                    href="/archive/?tag=CS"
+                    title="CS"
+                    rel="4">CS</a>
+        
+                <a data-sort="0003" 
+                    href="/archive/?tag=MiniProj"
+                    title="MiniProj"
+                    rel="2">MiniProj</a>
+        
+                <a data-sort="0003" 
+                    href="/archive/?tag=Python"
+                    title="Python"
+                    rel="2">Python</a>
+        
+                <a data-sort="0004" 
+                    href="/archive/?tag=Cloud"
+                    title="Cloud"
+                    rel="1">Cloud</a>
+        
+                <a data-sort="0004" 
+                    href="/archive/?tag=other"
+                    title="other"
+                    rel="1">other
+    </div>
+</section>
+
+
+                <!-- Suggest Blog -->
+                
+<hr>
+<h5>SUGGESTS</h5>
+<ul class="list-inline">
+  
+  <li><a href="/lab">LAB</a></li>
+  
+</ul>
+
+
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- add support for mathjax by voleking-->
+
+
+
+
+
+
+<!-- gitalk -->
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+	const gitalk = new Gitalk({
+	clientID: '74d564b1bb80db468c1f',
+	clientSecret: 'ac9d9ddf2cc77678e2bee6bc66871afb8f4a137d',
+	repo: 'jessychen1984.github.io',
+	owner: 'jessychen1984',
+	admin: ['jessychen1984'],
+	id: location.pathname, 
+	distractionFreeMode: true,  // Facebook-like distraction free mode
+	language: 'zh-CN'
+	})
+
+	gitalk.render('gitalk-container')
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'right',
+          // icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+<script>
+	window.onload = function(){
+		$("#ref").html(window.location.href)
+	}
+
+</script>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/jessychen1984">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright &copy; KiwiJia Blog 2020
+                    <br>
+                    Powered by <a href="http://huangxuan.me">Hux Blog</a> |
+					<!-- <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+					</iframe>-->
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js"></script>
+<script src="/js/sw-registration.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e50651e7413d7230700b00880927562f';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+<!-- Multi-Lingual -->
+
+
+
+
+<!-- Image to hack wechat -->
+<!--<img src="/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
