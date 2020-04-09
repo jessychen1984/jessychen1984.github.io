@@ -1,0 +1,25 @@
+---
+title: Poem
+layout: lab 
+description: I want my life to be a poem.
+permalink: /lab/poem.html
+hide-in-nav: true
+---
+
+<div class="post-preview item">
+	用Python实现诗词检索工具，适合小学低年级吞金兽，相关资料见：<br /><a href="/2020/03/31/poem/">《MiniProj之古诗词检索》</a> 
+</div>
+<hr>
+<div class="post-preview item">
+	<div><span>诗词类型:&nbsp;</span><select name="type"><option value="tang">全唐诗</option><option value="song">宋词</option><option value="yuan">元曲</option><option value="shijing">诗经</option></select></div>
+	<div><span>查询条件:&nbsp;</span>
+		<input name="author" type="text" size="8" placeholder="作者">
+		<input name="title" type="text" size="12" placeholder="标题">
+		<input name="content" type="text" placeholder="内容">
+	</div>
+	<div><span>返回条数:&nbsp;</span><input name="count" type="text" maxlength="1" value="5" size="1"/>&nbsp;&nbsp;<button onclick="getP()" type="button">查询(Go)</button>&nbsp;&nbsp;<button onclick="doPrintCal()" type="button">打印(Print)</button></div>
+</div>
+<hr>
+<div id="res" class="post-preview item" contenteditable="true">
+</div>
+<hr>

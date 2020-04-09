@@ -11,16 +11,16 @@
     <meta name="theme-color" content="#000000">
     
     <!-- Open Graph -->
-    <meta property="og:title" content="Lab - KiwiJia的博客 | KiwiJia Blog">
+    <meta property="og:title" content="Poem - KiwiJia的博客 | KiwiJia Blog">
     
     <meta property="og:type" content="website">
-    <meta property="og:description" content="Every noble work is at first impossible.">
+    <meta property="og:description" content="I want my life to be a poem.">
     
     <meta property="og:image" content="https://kiwijia.work/img/wechat.jpg">
-    <meta property="og:url" content="https://kiwijia.work/lab/">
+    <meta property="og:url" content="https://kiwijia.work/lab/poem.html">
     <meta property="og:site_name" content="KiwiJia的博客 | KiwiJia Blog">
     
-    <title>Lab - KiwiJia的博客 | KiwiJia Blog</title>
+    <title>Poem - KiwiJia的博客 | KiwiJia Blog</title>
 
     <!-- Web App Manifest -->
     <link rel="manifest" href="/pwa/manifest.json">
@@ -29,7 +29,7 @@
     <link rel="shortcut icon" href="/img/favicon.ico">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://kiwijia.work/lab/">
+    <link rel="canonical" href="https://kiwijia.work/lab/poem.html">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -178,11 +178,7 @@
 </script>
 
 
-    <!-- 
-Credits: this page shamelessly borrowed a lot from:
-https://github.com/kitian616/jekyll-TeXt-theme
--->
-<!-- Page Header -->
+    <!-- Page Header -->
 
 
 
@@ -197,8 +193,8 @@ https://github.com/kitian616/jekyll-TeXt-theme
         
         <div class="site-heading" id="tag-heading">
         
-          <h1>Lab</h1>
-          <span class="subheading">Every noble work is at first impossible.</span>
+          <h1>Poem</h1>
+          <span class="subheading">I want my life to be a poem.</span>
         </div>
       </div>
     </div>
@@ -211,36 +207,52 @@ https://github.com/kitian616/jekyll-TeXt-theme
 	<div class="row">
 		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 			<div class="mini-post-list js-result">
-				<section>
-					<div class="post-preview item">
-						<a href="/lab/calculator.html">
-				        <h2 class="post-title">
-							简单计算题出题器ByPython
-				        </h2>
-				        <h3 class="post-subtitle">
-							2020.03.25
-				        </h3>
-						</a>
-						<hr>
-					</div>
-				</section>
-				<section>
-					<div class="post-preview item">
-						<a href="/lab/poem.html">
-				        <h2 class="post-title">
-							诗词检索ByPython
-				        </h2>
-				        <h3 class="post-subtitle">
-							2020.04.09
-				        </h3>
-						</a>
-						<hr>
-					</div>
-				</section>
+				<div class="post-preview item">
+	用Python实现诗词检索工具，适合小学低年级吞金兽，相关资料见：<br /><a href="/2020/03/31/poem/">《MiniProj之古诗词检索》</a> 
+</div>
+<hr>
+<div class="post-preview item">
+	<div><span>诗词类型:&nbsp;</span><select name="type"><option value="tang">全唐诗</option><option value="song">宋词</option><option value="yuan">元曲</option><option value="shijing">诗经</option></select></div>
+	<div><span>查询条件:&nbsp;</span>
+		<input name="author" type="text" size="8" placeholder="作者">
+		<input name="title" type="text" size="12" placeholder="标题">
+		<input name="content" type="text" placeholder="内容">
+	</div>
+	<div><span>返回条数:&nbsp;</span><input name="count" type="text" maxlength="1" value="5" size="1"/>&nbsp;&nbsp;<button onclick="getP()" type="button">查询(Go)</button>&nbsp;&nbsp;<button onclick="doPrintCal()" type="button">打印(Print)</button></div>
+</div>
+<hr>
+<div id="res" class="post-preview item" contenteditable="true">
+</div>
+<hr>
+
 			</div>
+			
+			<div id="gitalk-container"></div>
+			
 		</div>
 	</div>
 </div>
+<script src="/js/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+<script src="/js/cloud.min.js"></script>
+<!-- gitalk -->
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+	const gitalk = new Gitalk({
+	clientID: '74d564b1bb80db468c1f',
+	clientSecret: 'ac9d9ddf2cc77678e2bee6bc66871afb8f4a137d',
+	repo: 'jessychen1984.github.io',
+	owner: 'jessychen1984',
+	admin: ['jessychen1984'],
+	id: location.pathname, 
+	distractionFreeMode: true,  // Facebook-like distraction free mode
+	language: 'zh-CN'
+	})
+
+	gitalk.render('gitalk-container')
+</script>
+
 
 
     <!-- Footer -->
