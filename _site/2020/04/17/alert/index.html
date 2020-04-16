@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="This is KiwiJia's blog">
+    <meta name="keywords"  content="KiwiJia Blog Computer Science coding software airflow python">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Airflow中自定义报警机制及对Slack和Opsgenie集成 - KiwiJia的博客 | KiwiJia Blog">
+    
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="我们已经知道，用Ariflow做任务调度是十分方便的。然而，任何程序都免不了面临执行失败的问题。虽然有retry大法，但当retry也失败的话，还是需要人工干预。这时候，及时而全面的报警就显得相当重要。今天，就来介绍下Airflow中的报警机制。包括：
+">
+    
+    <meta property="article:published_time" content="2020-04-17T00:00:00Z">
+    
+    
+    <meta property="article:author" content="jessychen">
+    
+    
+    <meta property="article:tag" content="Airflow">
+    
+    <meta property="article:tag" content="Alert">
+    
+    <meta property="article:tag" content="CS">
+    
+    
+    <meta property="og:image" content="https://kiwijia.work/img/wechat.jpg">
+    <meta property="og:url" content="https://kiwijia.work/2020/04/17/alert/">
+    <meta property="og:site_name" content="KiwiJia的博客 | KiwiJia Blog">
+    
+    <title>Airflow中自定义报警机制及对Slack和Opsgenie集成 - KiwiJia的博客 | KiwiJia Blog</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://kiwijia.work/2020/04/17/alert/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top invert">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">KiwiJia Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/lab/">Lab</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/home-bg.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+
+
+
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/home-bg.jpg');
+        background: ;
+    }
+
+    
+</style>
+
+<header class="intro-header style-text" >
+
+    <div class="header-mask"></div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/archive/?tag=Airflow" title="Airflow">Airflow</a>
+                        
+                        <a class="tag" href="/archive/?tag=Alert" title="Alert">Alert</a>
+                        
+                        <a class="tag" href="/archive/?tag=CS" title="CS">CS</a>
+                        
+                    </div>
+                    <h1>Airflow中自定义报警机制及对Slack和Opsgenie集成</h1>
+                    
+                    <h2 class="subheading">Custom alert mechanism in Airflow with Slack and Opsgenie</h2>
+                    <span class="meta">Posted by jessychen on April 17, 2020</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <!-- Multi-Lingual -->
+                
+
+				<p>我们已经知道，用Ariflow做任务调度是十分方便的。然而，任何程序都免不了面临执行失败的问题。虽然有retry大法，但当retry也失败的话，还是需要人工干预。这时候，及时而全面的报警就显得相当重要。今天，就来介绍下Airflow中的报警机制。包括：</p>
+
+<ol>
+  <li><a href="#自带email通知">自带Email通知</a></li>
+  <li><a href="#自定义email">自定义Email</a></li>
+  <li><a href="#消息发送至slack">消息发送至Slack</a></li>
+  <li><a href="#与opsgenie集成获取oncaller">与Opsgenie集成获取oncaller</a></li>
+</ol>
+
+<hr />
+
+<h3 id="自带email通知">自带Email通知</h3>
+
+<p>相信大多数用过airflow的人对其自带的email alert功能不会陌生。只要一些简单的conf和code添加，就可以实现DAG失败时发送邮件至指定邮箱。需要两步：</p>
+
+<ol>
+  <li>
+    <p>添加smtp配置，有两种方法，conf文件和环境变量（env var），见: <a href="https://airflow.readthedocs.io/en/stable/howto/set-config.html">airflow config</a>。如果两个地方都配置了的话，环境变量的的优先级会高于conf中的配置。</p>
+
+    <ul>
+      <li>在<code class="highlighter-rouge">airflow.cfg</code>中添加smtp配置：</li>
+    </ul>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="rouge-code"><pre><span class="o">[</span>email]
+email_backend <span class="o">=</span> airflow.utils.email.send_email_smtp
+   
+<span class="o">[</span>smtp]
+<span class="c"># If you want airflow to send emails on retries, failure, and you want to use</span>
+<span class="c"># the airflow.utils.email.send_email_smtp function, you have to configure an</span>
+<span class="c"># smtp server here</span>
+smtp_host <span class="o">=</span> localhost
+smtp_starttls <span class="o">=</span> True
+smtp_ssl <span class="o">=</span> False
+<span class="c"># Uncomment and set the user/pass settings if you want to use SMTP AUTH</span>
+smtp_user <span class="o">=</span> airflow
+smtp_password <span class="o">=</span> airflow
+smtp_port <span class="o">=</span> 25
+smtp_mail_from <span class="o">=</span> airflow@example.com
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+
+    <ul>
+      <li>在环境变量（<code class="highlighter-rouge">env var</code>）中添加，格式为<code class="highlighter-rouge">$AIRFLOW__{SECTION}__{KEY}</code>（注意中间是两个下划线）。类似：</li>
+    </ul>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="nb">export </span><span class="nv">AIRFLOW__SMTP__SMTP_HOST</span><span class="o">=</span>smtp.example.com
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+
+    <p>完成smtp配置后，可以在UI界面的<strong>Admin-&gt;Configuration</strong>中查到：</p>
+
+    <p><img src="/img/in-post/Airflow/config.png" alt="image-20200416162741711" /></p>
+  </li>
+  <li>
+    <p>在DAG的<code class="highlighter-rouge">default_args</code>中配置DAG run failed时发送报警：</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="rouge-code"><pre><span class="n">args</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="o">...</span>
+    <span class="s">'email'</span><span class="p">:</span> <span class="p">[</span><span class="s">"airflow@example.com"</span><span class="p">],</span>
+    <span class="s">'email_on_failure'</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+    <span class="s">'email_on_retry'</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+   
+<span class="n">dag</span> <span class="o">=</span> <span class="n">DAG</span><span class="p">(</span>
+    <span class="n">dag_id</span> <span class="o">=</span> <span class="s">"dag_id"</span><span class="p">,</span>
+    <span class="n">default_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>完成后，我们就可以在DAG执行失败是收到报警邮件了，邮件内容类似下面这样：</p>
+
+<pre><code class="language-reStructuredText">title: Airflow alert: &lt;TaskInstance: dag_id.task_id 2020-04-02T03:59:29.527624+00:00 [failed]&gt;
+----
+content:
+Try 4 out of 1
+Exception:
+The conn_id `***` isn't defined
+Log: Link
+Host: airflow-worker-0.airflow-worker.airflow.svc.cluster.local
+Log file: /usr/local/airflow/logs/airflow-worker-0/dag_id/task_id/2020-04-02T03:59:29.527624+00:00.log
+Mark success: Link
+</code></pre>
+
+<h3 id="自定义email">自定义Email</h3>
+
+<p>然而，自带的邮件报警有一些局限性，当业务增多变得复杂时会不能满足我们定制化的需求。例如：</p>
+
+<ul>
+  <li>不能自定义title；</li>
+  <li>邮件内容相对简单，只有出错的exception message 信息；</li>
+  <li>收件人只能配置一次，所有DAG的报警会发给同样的邮箱。</li>
+</ul>
+
+<p>其实，在Airflow中发送自定义的Email也十分方便。Airflow自带了一个email模块，只要调用里面的<code class="highlighter-rouge">send_email</code>方法，传入自定义的收件人，标题，内容，附件，就可以实现邮件的定制化。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">airflow.utils.email</span> <span class="kn">import</span> <span class="n">send_email</span>
+
+<span class="n">mail_to</span> <span class="o">=</span> <span class="s">"airflow@example.com"</span>
+<span class="n">subject</span> <span class="o">=</span> <span class="s">"This is alert email title"</span>
+<span class="n">content</span> <span class="o">=</span> <span class="s">"This is alert email content"</span>
+<span class="n">attachments</span> <span class="o">=</span> <span class="p">[</span><span class="s">"attach1.txt"</span><span class="p">,</span> <span class="s">"attach2.txt"</span><span class="p">]</span>
+<span class="n">send_email</span><span class="p">(</span><span class="n">mail_to</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">attachments</span><span class="p">)</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>那么，我们在哪里调用这个<code class="highlighter-rouge">send_email</code>呢？我们可以修改DAG的default_args参数，定义DAG失败是的callback函数：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="n">args</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="o">...</span>
+    <span class="s">'on_failure_callback'</span><span class="p">:</span> <span class="n">task_fail_alert</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">task_fail_alert</span><span class="p">(</span><span class="n">context</span><span class="p">):</span>
+  <span class="o">...</span>
+  <span class="n">send_email</span><span class="p">(</span><span class="n">mail_to</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">attachments</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>除了<code class="highlighter-rouge">send_email</code>，Airflow还提供了一个<code class="highlighter-rouge">send_email_smtp</code>方法，同样可以发邮件。两者的输入参数是一样的。那有什么区别呢，我们来看下源码：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">send_email</span><span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">html_content</span><span class="p">,</span>
+               <span class="n">files</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dryrun</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">bcc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+               <span class="n">mime_subtype</span><span class="o">=</span><span class="s">'mixed'</span><span class="p">,</span> <span class="n">mime_charset</span><span class="o">=</span><span class="s">'utf-8'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="s">"""
+    Send email using backend specified in EMAIL_BACKEND.
+    """</span>
+    <span class="n">path</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'email'</span><span class="p">,</span> <span class="s">'EMAIL_BACKEND'</span><span class="p">)</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s">'.'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">backend</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+    <span class="n">to</span> <span class="o">=</span> <span class="n">get_email_address_list</span><span class="p">(</span><span class="n">to</span><span class="p">)</span>
+    <span class="n">to</span> <span class="o">=</span> <span class="s">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">to</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">backend</span><span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">html_content</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
+                   <span class="n">dryrun</span><span class="o">=</span><span class="n">dryrun</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="n">cc</span><span class="p">,</span> <span class="n">bcc</span><span class="o">=</span><span class="n">bcc</span><span class="p">,</span>
+                   <span class="n">mime_subtype</span><span class="o">=</span><span class="n">mime_subtype</span><span class="p">,</span> <span class="n">mime_charset</span><span class="o">=</span><span class="n">mime_charset</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+  
+<span class="k">def</span> <span class="nf">send_email_smtp</span><span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">html_content</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">dryrun</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">bcc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                    <span class="n">mime_subtype</span><span class="o">=</span><span class="s">'mixed'</span><span class="p">,</span> <span class="n">mime_charset</span><span class="o">=</span><span class="s">'utf-8'</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="s">"""
+    Send an email with html content
+    &gt;&gt;&gt; send_email('test@example.com', 'foo', '&lt;b&gt;Foo&lt;/b&gt; bar', ['/dev/null'], dryrun=True)
+    """</span>
+    <span class="n">smtp_mail_from</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'smtp'</span><span class="p">,</span> <span class="s">'SMTP_MAIL_FROM'</span><span class="p">)</span>
+
+    <span class="n">to</span> <span class="o">=</span> <span class="n">get_email_address_list</span><span class="p">(</span><span class="n">to</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="n">mime_subtype</span><span class="p">)</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s">'Subject'</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s">'From'</span><span class="p">]</span> <span class="o">=</span> <span class="n">smtp_mail_from</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s">'To'</span><span class="p">]</span> <span class="o">=</span> <span class="s">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">to</span><span class="p">)</span>
+    <span class="n">recipients</span> <span class="o">=</span> <span class="n">to</span>
+    <span class="c1">#more code be omitted.
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>从源码可以看出，send_email调用了Airflow conf里<code class="highlighter-rouge">email_backend</code>中指定的发邮件方法，一般不改的话默认值是<code class="highlighter-rouge">airflow.utils.email.send_email_smtp</code>。所以默认配置中两者是等价的。如果觉得自带的<code class="highlighter-rouge">send_email_smpt</code>方法不能满足需求的话，还可以自定义邮件发送方法，在<code class="highlighter-rouge">email_backend</code>中指定就可以了。</p>
+
+<h3 id="消息发送至slack">消息发送至Slack</h3>
+
+<p>不过，对于邮箱中的邮件，我们其实经常不能及时看到。所以对于重要报警，更好的方式是能发到即时通信软件（例如Slack）中，方便我们立刻收到处理。<strong>Slack</strong>是类似于钉钉、RTX的一款优秀的企业通信工具。这里以Slack为例，介绍如何通过Slack及时接收DAG失败的消息。当然，根据需要，也可以换成其他的即时通信工具。</p>
+
+<p>我们知道，Airflow贡献的Operator是十分丰富的。其中，也有用于Slack的operator可以选择：<code class="highlighter-rouge">SlackWebhookOperator</code>, <code class="highlighter-rouge">SlackAPIOperator</code>, <code class="highlighter-rouge">SlackAPIPostOperator</code>。是不是有点多？先解释下它们的区别吧。</p>
+
+<p>在目前为止最新的release版本（v1-10）code中：</p>
+
+<ul>
+  <li><code class="highlighter-rouge">SlackWebhookOperator</code> 位于<em>airflow/contrib/operators/slack_webhook_operator.py</em>，继承于<code class="highlighter-rouge">SimpleHttpOperator</code>。从位置可看出这是由第三方贡献的。</li>
+  <li><code class="highlighter-rouge">SlackAPIOperator</code>和<code class="highlighter-rouge">SlackAPIPostOperator</code>位于<em>airflow/operators/slack_operator.py</em>，前者继承于<code class="highlighter-rouge">BaseOperator</code>，后者继承与前者。从位置可看出这个是airflow团队写的。</li>
+</ul>
+
+<p>上面两类operator的功能是重复的，我们任选一种来用就可以了。</p>
+
+<p>而在最新的master branch上，Airflow对文件的组织路径做了较大的调整，给所有第三方的providers建立了目录，把不同位置的相关code都统一放到了一块。例如，与Slack相关的code都统一挪到了<em>airflow/providers/slack</em>下，上面的两个slack operator的文件都位于<em>airflow/providers/slack/operators</em>下，文件的组织更为清晰。</p>
+
+<p>下面，以<code class="highlighter-rouge">SlackWebhookOperator</code>为例，介绍怎么向Slack发报警通知。attachments为一个json数组，定义见<a href="#https://api.slack.com/messaging/composing/layouts#attachments">slack api</a>。同样，也需要为slack建立一个connection。这里，我们把webhook_token存在password里。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">send_alert_to_slack</span><span class="p">(</span><span class="n">context</span><span class="p">):</span>
+    <span class="n">slack_webhook_token</span> <span class="o">=</span> <span class="n">BaseHook</span><span class="o">.</span><span class="n">get_connection</span><span class="p">(</span><span class="n">SLACK_CONN_ID</span><span class="p">)</span><span class="o">.</span><span class="n">password</span>
+    <span class="n">attachments</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="o">...</span>
+    <span class="p">]</span>
+    <span class="n">failed_alert</span> <span class="o">=</span> <span class="n">SlackWebhookOperator</span><span class="p">(</span>
+        <span class="n">task_id</span><span class="o">=</span><span class="s">'slack_notify'</span><span class="p">,</span>
+        <span class="n">http_conn_id</span><span class="o">=</span><span class="n">SLACK_CONN_ID</span><span class="p">,</span>
+        <span class="n">webhook_token</span><span class="o">=</span><span class="n">slack_webhook_token</span><span class="p">,</span>
+        <span class="n">attachments</span><span class="o">=</span><span class="n">attachments</span><span class="p">,</span>
+        <span class="n">message</span><span class="o">=</span><span class="s">"slack alert message"</span><span class="p">,</span>
+        <span class="n">username</span><span class="o">=</span><span class="s">'Airflow-alert'</span><span class="p">,</span>
+        <span class="n">link_names</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">channel</span><span class="o">=</span><span class="n">SLACK_CHANNEL</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">failed_alert</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>完成后，就可以在对应的slack channel里收到报警了，效果如下（图片来自于slack官网）：</p>
+
+<p><img src="/img/in-post/Airflow/slack.png" alt="image-20200416202732049" /></p>
+
+<h3 id="与opsgenie集成获取oncaller">与Opsgenie集成获取oncaller</h3>
+
+<p>经过上面几个步骤，已经可以成功的把报警同时发到邮箱和Slack中了。但是，发送到Slack channel里的消息，默认的Notifications设置是<code class="highlighter-rouge">just @mensions</code>。也就是说，除非改了设置，对于channel里的没有@给你的消息Slack是不会向你推送的，需要你打开对应的channel才能看到。所以为了不错过报警，还需要发消息时@到具体的人。</p>
+
+<p>那么<code class="highlighter-rouge">@who</code> 合适呢？相信大多数team都会有轮流oncall的机制，或是指定功能模块的负责人，我们只要能通过某种方法获取到这个oncaller或负责人，把消息<code class="highlighter-rouge">@him/her</code>就可以了。 当然，你也可以用<code class="highlighter-rouge">@channel</code>或<code class="highlighter-rouge">@here</code>的方式通知所有人，但这样会产生很多垃圾信息，而且效果也不如指定处理人来的好。</p>
+
+<p>这里以<strong>Opsgenie</strong>为例，介绍从Opsgenie获取oncaller，让其在Slack中及时收到DAG的报警。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="rouge-code"><pre><span class="c1">#get oncaller by http request
+</span><span class="n">curl_cmd</span> <span class="o">=</span> <span class="s">"curl -X GET  'https://api.opsgenie.com/v2/schedules/</span><span class="si">%</span><span class="s">s/on-calls?scheduleIdentifierType=name&amp;flat=true' --header 'Authorization: GenieKey </span><span class="si">%</span><span class="s">s'"</span> <span class="o">%</span> <span class="p">(</span><span class="n">schedule_name</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+<span class="n">oncall_json</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">curl_cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="n">oncall</span> <span class="o">=</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">oncall_json</span><span class="p">))[</span><span class="s">"data"</span><span class="p">][</span><span class="s">"onCallRecipients"</span><span class="p">]</span>
+<span class="n">notify</span> <span class="o">=</span> <span class="s">"@"</span><span class="o">+</span><span class="s">" @"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">oncall</span><span class="p">)</span>
+
+<span class="n">failed_alert</span> <span class="o">=</span> <span class="n">SlackWebhookOperator</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s">'slack_notify'</span><span class="p">,</span>
+    <span class="o">...</span>
+    <span class="n">message</span><span class="o">=</span><span class="s">"slack alert message </span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="n">notify</span><span class="p">,</span>
+    <span class="n">link_names</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>  <span class="c1">#this filed shoud be true to link the name with @mention
+</span>    <span class="o">...</span>
+<span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>到此为止，就打造了一个相对强大的报警通知机制。既不会漏报，也不会过多的打扰到不相干的人。</p>
+
+
+
+                <hr >
+				<p>今天的内容就到这了，如果觉得对你有帮助的话，请关注我的微信号，让我们共同成长进步~</p>
+				<p><img src="/img/search.png" width="60%;"/></p>
+                <hr style="visibility: hidden;">
+				<p><b>本文作者：</b>Jessychen<br /><b>版权声明：</b>本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC-BY-NC-SA 4.0 Int'l</a>许可协议<br /><b>如需转载，烦请注明出处: </b><span id="ref" style="color: #337ab7" /></p>
+                <hr style="visibility: hidden;">
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2020/04/13/poem-demo/" data-toggle="tooltip" data-placement="top" title="MiniProj之古诗词检索Demo实现">
+                        Previous<br>
+                        <span>MiniProj之古诗词检索Demo实现</span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+                <hr style="visibility: hidden;">
+
+                
+
+                
+				
+				
+					<div id="gitalk-container"></div>
+                
+
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+        <hr class="hidden-sm hidden-xs">
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        </a>
+        
+        
+                <a data-sort="0005" 
+                    href="/archive/?tag=Airflow"
+                    title="Airflow"
+                    rel="4">Airflow</a>
+        
+                <a data-sort="0001" 
+                    href="/archive/?tag=CS"
+                    title="CS"
+                    rel="8">CS</a>
+        
+                <a data-sort="0006" 
+                    href="/archive/?tag=MiniProj"
+                    title="MiniProj"
+                    rel="3">MiniProj</a>
+        
+                <a data-sort="0006" 
+                    href="/archive/?tag=Python"
+                    title="Python"
+                    rel="3">Python</a>
+        
+                <a data-sort="0007" 
+                    href="/archive/?tag=Cloud"
+                    title="Cloud"
+                    rel="2">Cloud</a>
+        
+                <a data-sort="0008" 
+                    href="/archive/?tag=Alert"
+                    title="Alert"
+                    rel="1">Alert</a>
+        
+                <a data-sort="0008" 
+                    href="/archive/?tag=other"
+                    title="other"
+                    rel="1">other
+    </div>
+</section>
+
+
+                <!-- Suggest Blog -->
+                
+<hr>
+<h5>SUGGESTS</h5>
+<ul class="list-inline">
+  
+  <li><a href="/lab">LAB</a></li>
+  
+</ul>
+
+
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- add support for mathjax by voleking-->
+
+
+
+
+
+
+<!-- gitalk -->
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/mermaid/8.0.0-rc.8/mermaid.min.js"></script>
+<script>
+	const gitalk = new Gitalk({
+	clientID: '74d564b1bb80db468c1f',
+	clientSecret: 'ac9d9ddf2cc77678e2bee6bc66871afb8f4a137d',
+	repo: 'jessychen1984.github.io',
+	owner: 'jessychen1984',
+	admin: ['jessychen1984'],
+	id: location.pathname, 
+	distractionFreeMode: true,  // Facebook-like distraction free mode
+	language: 'zh-CN'
+	})
+
+	gitalk.render('gitalk-container')
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'right',
+          // icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+<script>
+	window.onload = function(){
+		$("#ref").html(window.location.href)
+	}
+
+</script>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/jessychen1984">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright &copy; KiwiJia Blog 2020
+                    <br>
+                    Powered by <a href="http://huangxuan.me">Hux Blog</a> |
+					<!-- <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+					</iframe>-->
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js"></script>
+<script src="/js/sw-registration.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e50651e7413d7230700b00880927562f';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+<!-- Multi-Lingual -->
+
+
+
+
+<!-- Image to hack wechat -->
+<!--<img src="/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
