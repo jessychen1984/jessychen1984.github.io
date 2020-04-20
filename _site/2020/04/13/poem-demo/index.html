@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -334,7 +334,7 @@ CREATE TABLE `song` (
 
 <h4 id="数据转换">数据转换</h4>
 
-<p>这步，需要写个脚本来做转换，还是用了python来实现。这一步看似简单，但其实python的中文编码是个大坑，折腾了我好久😭。即使到了python3，对中文的支持任然不尽人意。如果遇到编码报错，只能挨个找方法解决了。并且，注意在用<code class="highlighter-rouge">json.dumps</code>的时候加参数<code class="highlighter-rouge">ensure_ascii=False</code>，要不然返回的结果就是unicode编码的str了。完整的代码如下：</p>
+<p>这步，需要写个脚本来做转换，还是用了python来实现。这一步看似简单，但其实python的中文编码是个大坑，折腾了我好久😭。即使到了python3，对中文的支持仍然不尽人意。如果遇到编码报错，只能挨个找方法解决了。并且，注意在用<code class="highlighter-rouge">json.dumps</code>的时候加参数<code class="highlighter-rouge">ensure_ascii=False</code>，要不然返回的结果就是unicode编码的str了。完整的代码如下：</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
@@ -491,6 +491,13 @@ deny all<span class="p">;</span>
                     </li>
                     
                     
+                    <li class="next">
+                        <a href="/2020/04/17/alert/" data-toggle="tooltip" data-placement="top" title="Airflow中自定义报警机制及对Slack和Opsgenie集成">
+                        Next<br>
+                        <span>Airflow中自定义报警机制及对Slack和Opsgenie集成</span>
+                        </a>
+                    </li>
+                    
                 </ul>
                 <hr style="visibility: hidden;">
 
@@ -532,29 +539,34 @@ deny all<span class="p">;</span>
                 <a data-sort="0005" 
                     href="/archive/?tag=Airflow"
                     title="Airflow"
-                    rel="3">Airflow</a>
+                    rel="4">Airflow</a>
         
                 <a data-sort="0001" 
                     href="/archive/?tag=CS"
                     title="CS"
-                    rel="7">CS</a>
+                    rel="8">CS</a>
         
-                <a data-sort="0005" 
+                <a data-sort="0006" 
                     href="/archive/?tag=MiniProj"
                     title="MiniProj"
                     rel="3">MiniProj</a>
         
-                <a data-sort="0005" 
+                <a data-sort="0006" 
                     href="/archive/?tag=Python"
                     title="Python"
                     rel="3">Python</a>
         
-                <a data-sort="0006" 
+                <a data-sort="0007" 
                     href="/archive/?tag=Cloud"
                     title="Cloud"
                     rel="2">Cloud</a>
         
-                <a data-sort="0007" 
+                <a data-sort="0008" 
+                    href="/archive/?tag=Alert"
+                    title="Alert"
+                    rel="1">Alert</a>
+        
+                <a data-sort="0008" 
                     href="/archive/?tag=other"
                     title="other"
                     rel="1">other
