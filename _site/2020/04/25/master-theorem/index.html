@@ -11,30 +11,28 @@
     <meta name="theme-color" content="#000000">
     
     <!-- Open Graph -->
-    <meta property="og:title" content="Airflow中的路径选择 - KiwiJia的博客 | KiwiJia Blog">
+    <meta property="og:title" content="主定理分析算法的时间复杂度 - KiwiJia的博客 | KiwiJia Blog">
     
     <meta property="og:type" content="article">
     <meta property="og:description" content="
-  Airflow 是 Airbnb 公司开源的任务调度系统, 通过使用 Python 开发 DAG, 非常方便的调度计算任务。
-
-">
+  在演算法分析中，支配理论（英語：master theorem）提供了用渐近符号（大O符号）表示许多由分治法得到的递推关系式的方法。这种方法最初由Jon Bentlery，Dorothea Haken和James B. Saxe在1980年提出，在那里被描述为解决这种递推的“天下無敵法”(master method)。此方法经由经典演算法教科书Cormen，Leiserson，Rives...">
     
-    <meta property="article:published_time" content="2020-03-22T00:00:00Z">
+    <meta property="article:published_time" content="2020-04-25T00:00:00Z">
     
     
     <meta property="article:author" content="jessychen">
     
     
-    <meta property="article:tag" content="Airflow">
+    <meta property="article:tag" content="algorithm">
     
     <meta property="article:tag" content="CS">
     
     
     <meta property="og:image" content="https://kiwijia.work/img/wechat.jpg">
-    <meta property="og:url" content="https://kiwijia.work/2020/03/22/python-branch/">
+    <meta property="og:url" content="https://kiwijia.work/2020/04/25/master-theorem/">
     <meta property="og:site_name" content="KiwiJia的博客 | KiwiJia Blog">
     
-    <title>Airflow中的路径选择 - KiwiJia的博客 | KiwiJia Blog</title>
+    <title>主定理分析算法的时间复杂度 - KiwiJia的博客 | KiwiJia Blog</title>
 
     <!-- Web App Manifest -->
     <link rel="manifest" href="/pwa/manifest.json">
@@ -43,7 +41,7 @@
     <link rel="shortcut icon" href="/img/favicon.ico">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://kiwijia.work/2020/03/22/python-branch/">
+    <link rel="canonical" href="https://kiwijia.work/2020/04/25/master-theorem/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -210,7 +208,7 @@
     
 </style>
 
-<header class="intro-header style-text">
+<header class="intro-header style-text" >
 
     <div class="header-mask"></div>
     
@@ -220,15 +218,15 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                        <a class="tag" href="/archive/?tag=Airflow" title="Airflow">Airflow</a>
+                        <a class="tag" href="/archive/?tag=algorithm" title="algorithm">algorithm</a>
                         
                         <a class="tag" href="/archive/?tag=CS" title="CS">CS</a>
                         
                     </div>
-                    <h1>Airflow中的路径选择</h1>
+                    <h1>主定理分析算法的时间复杂度</h1>
                     
-                    <h2 class="subheading">DAG path select in Airflow</h2>
-                    <span class="meta">Posted by jessychen on March 22, 2020</span>
+                    <h2 class="subheading">master theorem</h2>
+                    <span class="meta">Posted by jessychen on April 25, 2020</span>
                 </div>
             </div>
         </div>
@@ -255,138 +253,65 @@
                 
 
 				<blockquote>
-  <p>Airflow 是 Airbnb 公司开源的任务调度系统, 通过使用 Python 开发 DAG, 非常方便的调度计算任务。</p>
+  <p>在<a href="https://zh.wikipedia.org/wiki/算法分析">演算法分析</a>中，<strong>支配理论</strong>（英語：master theorem）提供了用渐近符号（<a href="https://zh.wikipedia.org/wiki/大O符号">大O符号</a>）表示许多由<a href="https://zh.wikipedia.org/wiki/分治法">分治法</a>得到的<a href="https://zh.wikipedia.org/wiki/递推关系式">递推关系式</a>的方法。这种方法最初由<a href="https://en.wikipedia.org/wiki/Jon_Bentley_(computer_scientist)">Jon Bentlery</a>，<a href="https://en.wikipedia.org/wiki/Dorothea_Haken">Dorothea Haken</a>和<a href="https://en.wikipedia.org/wiki/James_B._Saxe">James B. Saxe</a>在1980年提出，在那里被描述为解决这种递推的“天下無敵法”(master method)。此方法经由经典演算法教科书<a href="https://en.wikipedia.org/wiki/Thomas_H._Cormen">Cormen</a>，<a href="https://en.wikipedia.org/wiki/Charles_E._Leiserson">Leiserson</a>，<a href="https://en.wikipedia.org/wiki/Ron_Rivest">Rivest</a>和<a href="https://en.wikipedia.org/wiki/Clifford_Stein">Stein</a>的《<a href="https://zh.wikipedia.org/wiki/算法导论">演算法导论</a>》 (introduction to algorithm) 推广而为人熟知。</p>
 </blockquote>
 
-<p>Airflow之前，当多个上下游的任务间存在依赖时，需要我们自己来写一些调度的code，常用的有几种：</p>
+<p>众所周知，递归是算法的一个重要表现形式，不仅作用大，而且其复杂度的分析也比其他方式要繁杂。怎样有效的确定普通递归式和一些典型算法递归式的复杂度，是面试中常常会被问到的。由于递归式复杂度的难以确定，所以目前常用的方法有这么几种：<strong>代换猜测法、递归树法、主定理、直接数学分析法</strong>。</p>
+
+<p>代换猜测法通常和递归树法合用，利用递归树法得到一个大概正确的结果，然后利用数学归纳法对其验证。</p>
+
+<p>直接的数学分析法相对很直接，很强大，但是对数学要求很高。</p>
+
+<p>在算法分析中，主定理（master theorem）提供了用渐近符号表示许多由分治法得到的递推关系式的方法。主定理通常可以解决如下的递归表达式：</p>
+
+<p><strong>T(n)=a*T（n/b）+f（n）</strong></p>
+
+<h3 id="主定理">主定理</h3>
+
+<p>首先，是符号的解释：</p>
 
 <ul>
-  <li>上游任务完成后置个done标记。需要下游隔段时间检查上游任务有没有完成。</li>
-  <li>上游完成任务后通过某个api来call下游。你说call 失败了？retry大法用起来呀​​。。。</li>
+  <li>符号Θ，读音西塔，既是上界也是下界，等于，严格贴紧。</li>
+  <li>符号𝑂，读音殴，表示上界，小于等于，贴紧未知。</li>
+  <li>符号𝑜，读音也是殴，小于，不贴紧。</li>
+  <li>符号Ω，读音偶眯嘎，表示下界，大于等于，贴紧未知。</li>
+  <li>符号𝜔，读音也是偶眯嘎，表示下界，大于，不贴紧。</li>
 </ul>
 
-<p>模块太多，依赖太复杂，记不住怎么办？写个文档吧。。。上游改了？？改文档吧。。。下游又变了？？？再改。。。哎呀，上线来不及了，过几天更新吧。。。。那个文档很久没更新了，还是看code吧。。。</p>
+<p>上面的“贴紧”是tight翻译过来的，大概就是是否严格等于的意思吧。</p>
 
-<p>而Airflow使用DAG，可以很方便的通过定义<strong>Operator</strong>，及Operator间的关系（<strong>upstream, downstream</strong>）来解决任务之间的各种依赖。同时，它还提供了UI来查看任务依赖的DAG，任务运行状态。简单的说，它可以使我们更多的关注到业务的实现上而不是各种复杂的模块调用及繁琐的文档维护。</p>
+<p><strong>意思就是Θ是平均时间复杂度，𝑂是最坏情况下的复杂度，Ω是最好情况下的复杂度。</strong></p>
 
-<p>当然，作为一条完整的业务流，根据上游的执行结果来决定下游的行为是最常见不过的事了。比如👇的例子：</p>
+<p>下面是主定理，来源<a href="https://zh.wikipedia.org/wiki/%E4%B8%BB%E5%AE%9A%E7%90%86">维基百科</a></p>
 
-<p>有个淘气的Sam小盆友，每天按时 <strong>完成作业</strong> 是个大难题。于是，妈妈想了个办法：</p>
+<p><img src="/img/in-post/algorithm/2.png" alt="image-20200424150950868" /></p>
 
-<p><img src="/img/in-post/Airflow/branch.png" alt="branch-dag"></p>
+<h3 id="常见应用">常见应用</h3>
 
-<p>真是个不错的法子👍！这里，<code class="highlighter-rouge">8点前写完</code>在Airflow里就是个判断用的task，由它来决定整个DAG的下一步操作。那么，怎么实现呢？Airflow提供了<strong>BranchPythonOperator</strong>，用来支持分支, 通过函数返回要执行的分支。</p>
+<p>对于应用主定理来说，一定要分清选取定定理中的哪种情况（如果有符合的）。下面是常见的几种应用：</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
-<td class="rouge-gutter gl"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-</pre></td>
-<td class="rouge-code"><pre><span class="n">check_hour_op</span> <span class="o">=</span> <span class="n">BranchPythonOperator</span><span class="p">(</span>
-  <span class="n">task_id</span> <span class="o">=</span> <span class="s">"check_hour"</span><span class="p">,</span>
-  <span class="n">python_callable</span> <span class="o">=</span> <span class="n">check_hour</span><span class="p">,</span>
-  <span class="n">dag</span> <span class="o">=</span> <span class="n">dag</span>
-<span class="p">)</span>
-<span class="k">def</span> <span class="nf">check_hour</span><span class="p">(){</span>
-  <span class="k">if</span> <span class="n">current_hour</span> <span class="o">&gt;</span> <span class="mi">8</span><span class="p">:</span>
-    <span class="k">return</span> <span class="s">"sleep"</span>
-  <span class="k">else</span><span class="p">:</span>
-    <span class="k">return</span> <span class="s">"watch_animation"</span>
-<span class="p">}</span>
-<span class="n">do_homework_op</span> <span class="o">&gt;&gt;</span> <span class="n">check_hour_op</span> <span class="o">&gt;&gt;</span> <span class="p">[</span><span class="n">watch_animation_op</span><span class="p">,</span> <span class="n">sleep_op</span><span class="p">]</span>
-<span class="n">watch_animation_op</span> <span class="o">&gt;&gt;</span> <span class="n">sleep_op</span>
-</pre></td>
-</tr></tbody></table></code></pre></div></div>
+<p><img src="/img/in-post/algorithm/1.png" alt="image-20200424151826459" /></p>
 
-<p>Ok👏 简直太简单了！执行一下试试，然后你会发现，当<code class="highlighter-rouge">check_hour</code>返回<code class="highlighter-rouge">watch_animation</code>时，<code class="highlighter-rouge">sleep</code>这个task的状态永远是skip的？？？让我们翻一下官方的解释：</p>
+<p>对于复杂的递归，可以先找准递归关系式，再用上面三种情况带入来计算时间复杂度。对于一般的面试已经足够用了。</p>
 
-<blockquote>
-  <p>Note that using tasks with <code class="highlighter-rouge">depends_on_past=True</code> downstream from <code class="highlighter-rouge">BranchPythonOperator</code> is logically unsound as <code class="highlighter-rouge">skipped</code> status will invariably lead to block tasks that depend on their past successes. <code class="highlighter-rouge">skipped</code> states propagates where all directly upstream tasks are <code class="highlighter-rouge">skipped</code>.</p>
-</blockquote>
-
-<p>就是说，<code class="highlighter-rouge">sleep</code>这个task在<code class="highlighter-rouge">check_hour</code>选择了<code class="highlighter-rouge">watch_animation</code>的时候就被skip掉了，即便这里它是<code class="highlighter-rouge">watch_animation</code>的下游任务，仍然不会被执行😭。原因呢？官方说是downstream设了<em>depends_on_past=True</em>。要知道，operator中还有个属性叫<em>trigger_rule</em>，默认值是<em>all_success</em>。这两个组合在一起就要上游的task状态都为<em>success</em>才能继续往下执行。而这里<code class="highlighter-rouge">sleep</code>的上游任务<code class="highlighter-rouge">watch_animation</code>状态是<em>skipped</em>, 所以<code class="highlighter-rouge">sleep</code>就没有被执行到了。那么，如果这里我们把<code class="highlighter-rouge">sleep</code>的<em>trigger_rule</em>置成<em>none_failed</em>的话，整个过程就能按我们预期的执行下去了:</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
-<td class="rouge-gutter gl"><pre class="lineno">1
-2
-3
-4
-5
-6
-</pre></td>
-<td class="rouge-code"><pre><span class="n">sleep_op</span> <span class="o">=</span> <span class="n">PythonOperator</span><span class="p">(</span>
-  <span class="n">task_id</span> <span class="o">=</span> <span class="s">"sleep"</span><span class="p">,</span>
-  <span class="n">trigger_rule</span> <span class="o">=</span> <span class="s">"none_failed"</span><span class="p">,</span>
-  <span class="n">python_callable</span> <span class="o">=</span> <span class="s">"sleep"</span><span class="p">,</span>
-  <span class="n">dag</span> <span class="o">=</span> <span class="n">dag</span>
-<span class="p">)</span>
-</pre></td>
-</tr></tbody></table></code></pre></div></div>
-
-<p>再试一下，果然可以啦<img class="emoji" title=":satisfied:" alt=":satisfied:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f606.png" height="20" width="20"></p>
-
-<p>Airflow现在支持的Trigger Rules:</p>
-
-<blockquote>
-  <p>ALL_SUCCESS = ‘all_success’
-ALL_FAILED = ‘all_failed’ 
-ALL_DONE = ‘all_done’ 
-ONE_SUCCESS = ‘one_success’ 
-ONE_FAILED = ‘one_failed’ 
-NONE_FAILED = ‘none_failed’ 
-NONE_SKIPPED = ‘none_skipped’ 
-DUMMY = ‘dummy’</p>
-</blockquote>
-
-<p>除了上面这个方法，我们也可以利用<strong>DummyOperator</strong>来达到想要的效果。也就是在<code class="highlighter-rouge">watch_animation</code>平行的分支上加一个<code class="highlighter-rouge">dummy</code>task，它啥活都不干：</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
-<td class="rouge-gutter gl"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-</pre></td>
-<td class="rouge-code"><pre><span class="n">dummp_op</span> <span class="o">=</span> <span class="n">DummyOperator</span><span class="p">(</span>
-	<span class="n">task_id</span> <span class="o">=</span> <span class="s">"dummy"</span><span class="p">,</span>
-  <span class="n">dag</span> <span class="o">=</span> <span class="n">dag</span>
-<span class="p">)</span>
-<span class="n">do_homework_op</span> <span class="o">&gt;&gt;</span> <span class="n">check_hour_op</span> <span class="o">&gt;&gt;</span> <span class="p">[</span><span class="n">watch_animation_op</span><span class="p">,</span> <span class="n">dummp_op</span><span class="p">]</span>
-<span class="n">watch_animation_op</span> <span class="o">&gt;&gt;</span> <span class="n">sleep_op</span>
-<span class="n">dummp_op</span> <span class="o">&gt;&gt;</span> <span class="n">sleep_op</span>
-</pre></td>
-</tr></tbody></table></code></pre></div></div>
-
-<p>这种方式更简单易懂，代价就是会稍稍增加些代码，喜欢哪个就仁者见仁了<img class="emoji" title=":smirk:" alt=":smirk:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f60f.png" height="20" width="20">。</p>
+<p><em>本文内容整理于网络</em></p>
 
 
-                <hr>
+                <hr >
 				<p>今天的内容就到这了，如果觉得对你有帮助的话，请关注我的微信号，让我们共同成长进步~</p>
-				<p><img src="/img/search.png" width="60%;"></p>
+				<p><img src="/img/search.png" width="60%;"/></p>
                 <hr style="visibility: hidden;">
-				<p><b>本文作者：</b>Jessychen<br><b>版权声明：</b>本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC-BY-NC-SA 4.0 Int'l</a>许可协议<br><b>如需转载，烦请注明出处: </b><span id="ref" style="color: #337ab7"></span></p>
+				<p><b>本文作者：</b>Jessychen<br /><b>版权声明：</b>本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC-BY-NC-SA 4.0 Int'l</a>许可协议<br /><b>如需转载，烦请注明出处: </b><span id="ref" style="color: #337ab7" /></p>
                 <hr style="visibility: hidden;">
                 <ul class="pager">
                     
-                    
-                    <li class="next">
-                        <a href="/2020/03/23/calculate-generator/" data-toggle="tooltip" data-placement="top" title="MiniProj之简单计算题出题器">
-                        Next<br>
-                        <span>MiniProj之简单计算题出题器</span>
+                    <li class="previous">
+                        <a href="/2020/04/17/alert/" data-toggle="tooltip" data-placement="top" title="Airflow中自定义报警机制及对Slack和Opsgenie集成">
+                        Previous<br>
+                        <span>Airflow中自定义报警机制及对Slack和Opsgenie集成</span>
                         </a>
                     </li>
+                    
                     
                 </ul>
                 <hr style="visibility: hidden;">
@@ -423,26 +348,49 @@ DUMMY = ‘dummy’</p>
         
         
         
+        </a>
         
         
+                <a data-sort="0006" 
+                    href="/archive/?tag=Airflow"
+                    title="Airflow"
+                    rel="4">Airflow</a>
         
-                <a data-sort="0006" href="/archive/?tag=Airflow" title="Airflow" rel="4">Airflow</a>
+                <a data-sort="0001" 
+                    href="/archive/?tag=CS"
+                    title="CS"
+                    rel="9">CS</a>
         
-                <a data-sort="0001" href="/archive/?tag=CS" title="CS" rel="9">CS</a>
+                <a data-sort="0007" 
+                    href="/archive/?tag=MiniProj"
+                    title="MiniProj"
+                    rel="3">MiniProj</a>
         
-                <a data-sort="0007" href="/archive/?tag=MiniProj" title="MiniProj" rel="3">MiniProj</a>
+                <a data-sort="0007" 
+                    href="/archive/?tag=Python"
+                    title="Python"
+                    rel="3">Python</a>
         
-                <a data-sort="0007" href="/archive/?tag=Python" title="Python" rel="3">Python</a>
+                <a data-sort="0008" 
+                    href="/archive/?tag=Cloud"
+                    title="Cloud"
+                    rel="2">Cloud</a>
         
-                <a data-sort="0008" href="/archive/?tag=Cloud" title="Cloud" rel="2">Cloud</a>
+                <a data-sort="0009" 
+                    href="/archive/?tag=Alert"
+                    title="Alert"
+                    rel="1">Alert</a>
         
-                <a data-sort="0009" href="/archive/?tag=Alert" title="Alert" rel="1">Alert</a>
+                <a data-sort="0009" 
+                    href="/archive/?tag=algorithm"
+                    title="algorithm"
+                    rel="1">algorithm</a>
         
-                <a data-sort="0009" href="/archive/?tag=algorithm" title="algorithm" rel="1">algorithm</a>
-        
-                <a data-sort="0009" href="/archive/?tag=other" title="other" rel="1">other
-    </a>
-</div>
+                <a data-sort="0009" 
+                    href="/archive/?tag=other"
+                    title="other"
+                    rel="1">other
+    </div>
 </section>
 
 
@@ -568,7 +516,7 @@ DUMMY = ‘dummy’</p>
 </ul>
 
                 <p class="copyright text-muted">
-                    Copyright © KiwiJia Blog 2020
+                    Copyright &copy; KiwiJia Blog 2020
                     <br>
                     Powered by <a href="http://huangxuan.me">Hux Blog</a> |
 					<!-- <iframe
