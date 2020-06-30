@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="This is KiwiJia's blog">
+    <meta name="keywords"  content="KiwiJia Blog Computer Science coding software airflow python">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Airflow Pool限制tasks并发 - KiwiJia的博客 | KiwiJia Blog">
+    
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="
+  Some systems can get overwhelmed when too many processes hit them at the same time. Airflow pools can be used to limit the execution parallelism on arbitrary sets of tasks.
+
+">
+    
+    <meta property="article:published_time" content="2020-06-30T00:00:00Z">
+    
+    
+    <meta property="article:author" content="jessychen">
+    
+    
+    <meta property="article:tag" content="Airflow">
+    
+    <meta property="article:tag" content="CS">
+    
+    
+    <meta property="og:image" content="https://kiwijia.work/img/wechat.jpg">
+    <meta property="og:url" content="https://kiwijia.work/2020/06/30/pool/">
+    <meta property="og:site_name" content="KiwiJia的博客 | KiwiJia Blog">
+    
+    <title>Airflow Pool限制tasks并发 - KiwiJia的博客 | KiwiJia Blog</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://kiwijia.work/2020/06/30/pool/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top invert">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">KiwiJia Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/lab/">Lab</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/home-bg.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+
+
+
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/home-bg.jpg');
+        background: ;
+    }
+
+    
+</style>
+
+<header class="intro-header style-text">
+
+    <div class="header-mask"></div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/archive/?tag=Airflow" title="Airflow">Airflow</a>
+                        
+                        <a class="tag" href="/archive/?tag=CS" title="CS">CS</a>
+                        
+                    </div>
+                    <h1>Airflow Pool限制tasks并发</h1>
+                    
+                    <h2 class="subheading">Using pool to limit tasks concurrency in Airflow</h2>
+                    <span class="meta">Posted by jessychen on June 30, 2020</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <!-- Multi-Lingual -->
+                
+
+				<blockquote>
+  <p>Some systems can get overwhelmed when too many processes hit them at the same time. Airflow pools can be used to <strong>limit the execution parallelism</strong> on arbitrary sets of tasks.</p>
+</blockquote>
+
+<ul>
+  <li><a href="#%E8%83%8C%E6%99%AF">背景</a></li>
+  <li><a href="#%E5%AE%9E%E7%8E%B0">实现</a></li>
+  <li><a href="#%E6%BA%90%E7%A0%81">源码</a></li>
+  <li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+
+<h3 id="背景">背景</h3>
+
+<p>最近，项目中用Airflow重写了某个系统的调度方式。本地各种测试都好好的，而放到线上后，突然收到大量task fail的报警<img class="emoji" title=":dizzy_face:" alt=":dizzy_face:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f635.png" height="20" width="20">。查看log发现几个灵异现象：</p>
+
+<ol>
+  <li>
+    <p>Airflow UI上加载不了log，需要到机器上才能看；</p>
+  </li>
+  <li>
+    <p>显示fail的task，并没有错误或异常，只是进程被kill了，task log显示 <code class="highlighter-rouge">INFO - Task exited with return code -9</code></p>
+  </li>
+</ol>
+
+<p>也就是说，Airflow不知道出于什么原因把正在跑的task给kill掉了。继续查，发现有log<code class="highlighter-rouge">&lt;TaskInstance: *** [running]&gt; detected as zombie</code>。看来和<code class="highlighter-rouge">zombie</code> 有关。然而，又是什么原因导致大量zombie tasks的产生呢？最后，查找system log，发现是OOM了，python的进程由于OOM被os kill了。</p>
+
+<p>于是，初步估计是DAG并行run的task太多，folk出来的进程太多，使worker撑不住了。为了验证这个猜想，加了一台worker后再跑，果然不再报错了👍。看来并行的task多了，对airflow本身的schedule也是个不小的考验。</p>
+
+<p>只是，加worker的方式总归是个临时的补救方案，那么有没有更好的办法，能对tasks的并发做一个限制，减轻worker的压力，不影响其他dag的tasks呢？调研后发现，Airflow中的pool能实现这个需求。</p>
+
+<h3 id="实现">实现</h3>
+
+<p>用Pool来限制tasks的并发相当简单，只需要几步操作。</p>
+
+<h4 id="1-在airflow-ui-上建custom-pool">1. 在Airflow UI 上建custom pool。</h4>
+
+<p>Pool的UI入口在: <strong>Admin-&gt;Pools</strong>。</p>
+
+<p>UI上可以看到，为设置前，整个Airflow只有一个default pool，Slots=128个。这里Slot的意思可以理解为这个pool里可以同时跑128个taskUI上可以看到，为设置前，整个Airflow只有一个default pool，Slots=128个。这里Slot的意思可以理解为这个pool里可以同时跑128个tasks。</p>
+
+<p>点击<code class="highlighter-rouge">create</code>，建立需要的custom pool，设置slot数。下面分别建了custom_pool1和custom_pool2两个pool，slots设为4和1。</p>
+
+<p><img src="/img/in-post/Airflow/pool2.png" alt="image-20200630143147636"></p>
+
+<h4 id="2-修改dag-code">2. 修改DAG code</h4>
+
+<p>有了自定义的pool后，要做的就是在code里指定我们要的pool：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td>
+<td class="rouge-code"><pre><span class="n">pool_op1</span> <span class="o">=</span> <span class="n">PythonOperator</span><span class="p">(</span>
+    <span class="n">task_id</span> <span class="o">=</span> <span class="s">"cus_pool_1"</span><span class="p">,</span>
+    <span class="n">python_callable</span> <span class="o">=</span> <span class="n">cus_pool1</span><span class="p">,</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="s">"custom_pool1"</span><span class="p">,</span> <span class="c1">#this line is to identify the pool
+</span>    <span class="n">dag</span> <span class="o">=</span> <span class="n">dag</span>
+<span class="p">)</span>
+<span class="n">pool_op2</span> <span class="o">=</span> <span class="n">PythonOperator</span><span class="p">(</span>
+    <span class="n">task_id</span> <span class="o">=</span> <span class="s">"cus_pool_2"</span><span class="p">,</span>
+    <span class="n">python_callable</span> <span class="o">=</span> <span class="n">cus_pool2</span><span class="p">,</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="s">"custom_pool2"</span><span class="p">,</span> <span class="c1">#this line is to identify the pool
+</span>    <span class="n">dag</span> <span class="o">=</span> <span class="n">dag</span>
+<span class="p">)</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<h4 id="3-check">3. Check</h4>
+
+<p>最后，trigger对应的DAG，可以看到指定了对应custom pool的task消耗的是custom pool中的slots。在并行task数目大于可用slots的情况下，task会进行排队。</p>
+
+<p><img src="/img/in-post/Airflow/pool2.png" alt="image-20200630144759262"></p>
+
+<h3 id="源码">源码</h3>
+
+<p>Airflow是怎么实现pool机制的呢？这里来看下它的源码吧。</p>
+
+<h4 id="pool-struct">Pool Struct</h4>
+
+<p>Pool的结构定义在<code class="highlighter-rouge">airflow.models.pool</code>，git地址：https://github.com/apache/airflow/blob/master/airflow/models/pool.py</p>
+
+<ol>
+  <li>class PoolStats，比较好理解是统计pool的使用情况，有3个统计项，分别对应slots总数，正在running的数目，queued的数目，和UI上面显示相对应。</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="k">class</span> <span class="nc">PoolStats</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="s">""" Dictionary containing Pool Stats """</span>
+    <span class="n">total</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">running</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">queued</span><span class="p">:</span> <span class="nb">int</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<ol>
+  <li>
+    <p>class Pool，定义了一些Pool的基本操作。可以看到pool的信息都是存在DB中<code class="highlighter-rouge">slot_pool</code> 这张表里的。</p>
+
+    <p>class中的pool对应的是pool_name，slots对应pool中的slot总数，可以设为-1，表示这个pool不限制并行的任务（当然不推荐这么做）。</p>
+  </li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td>
+<td class="rouge-code"><pre><span class="k">class</span> <span class="nc">Pool</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="s">"""
+    the class to get Pool info.
+    """</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s">"slot_pool"</span>
+    
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">256</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="c1"># -1 for infinite
+</span>    <span class="n">slots</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
+
+    <span class="n">DEFAULT_POOL_NAME</span> <span class="o">=</span> <span class="s">'default_pool'</span>
+
+
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<ol>
+  <li>
+    <p>Class Pool中有3个<strong>staticmethod</strong>，都是DB query的操作。</p>
+
+    <p>前两个<code class="highlighter-rouge">get_pool</code>是根据pool_name去拿到pool的结构。这里，处理DB中pool_name重名的情况是，返回的是找到的第一个pool。在UI上试了下create操作，并不能创建重名的pool，会报<code class="highlighter-rouge">Already exists.</code>的错。看来这个是预防直接写入DB时出现的重名问题。</p>
+
+    <p><code class="highlighter-rouge">slots_stats</code>里import了<code class="highlighter-rouge">TaskInstance</code>，会根据当前task run的情况返回所有pool的状态，上面的UI显示就是调用的这个接口。</p>
+  </li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+</pre></td>
+<td class="rouge-code"><pre><span class="k">def</span> <span class="nf">get_pool</span><span class="p">(</span><span class="n">pool_name</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Pool</span><span class="p">)</span><span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">Pool</span><span class="o">.</span><span class="n">pool</span> <span class="o">==</span> <span class="n">pool_name</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">get_default_pool</span><span class="p">(</span><span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">Pool</span><span class="o">.</span><span class="n">get_pool</span><span class="p">(</span><span class="n">Pool</span><span class="o">.</span><span class="n">DEFAULT_POOL_NAME</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">slots_stats</span><span class="p">(</span><span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PoolStats</span><span class="p">]:</span>
+  <span class="c1">#关键是这几行
+</span>  <span class="c1">#拿到所有的pools
+</span>  <span class="n">pool_rows</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Pool</span><span class="o">.</span><span class="n">pool</span><span class="p">,</span> <span class="n">Pool</span><span class="o">.</span><span class="n">slots</span><span class="p">)</span><span class="o">.</span><span class="nb">all</span><span class="p">()</span>
+  <span class="c1">#初始化返回的PoolStats
+</span>  <span class="k">for</span> <span class="p">(</span><span class="n">pool_name</span><span class="p">,</span> <span class="n">total_slots</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pool_rows</span><span class="p">:</span>
+  		<span class="n">pools</span><span class="p">[</span><span class="n">pool_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">PoolStats</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">total_slots</span><span class="p">,</span> <span class="n">running</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">queued</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+	<span class="c1">#查询task占用pool的情况，EXECUTION_STATES定义在airflow.ti_deps.dependencies_states,就是running和queued的状态和
+</span>  <span class="s">'''
+    EXECUTION_STATES = {
+      State.RUNNING,
+      State.QUEUED,
+  	}
+  '''</span>
+  <span class="n">state_count_by_pool</span> <span class="o">=</span> <span class="p">(</span>
+  		<span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">TaskInstance</span><span class="o">.</span><span class="n">pool</span><span class="p">,</span> <span class="n">TaskInstance</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+      <span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">TaskInstance</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">EXECUTION_STATES</span><span class="p">)))</span>
+      <span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">TaskInstance</span><span class="o">.</span><span class="n">pool</span><span class="p">,</span> <span class="n">TaskInstance</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+  <span class="p">)</span><span class="o">.</span><span class="nb">all</span><span class="p">()</span>
+  <span class="c1">#然后就拼成结果返回了
+</span></pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<ol>
+  <li>
+    <p>class Pool中还有几个方法，是获取不同状态的slots数目。</p>
+
+    <p>code比较简单，都是从DB query后根据状态做的filter，贴一个<code class="highlighter-rouge">occupied_slots</code> 的实现，其他的都类似。其中running_slots和queued_slots比较好理解，occupied_slots=running_slots+queued_slots，open_slots=Pool.slots-occupied_slots。</p>
+  </li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td>
+<td class="rouge-code"><pre><span class="k">def</span> <span class="nf">occupied_slots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span><span class="p">):</span>
+  <span class="kn">from</span> <span class="nn">airflow.models.taskinstance</span> <span class="kn">import</span> <span class="n">TaskInstance</span>  <span class="c1"># Avoid circular import
+</span>  <span class="k">return</span> <span class="p">(</span>
+  		<span class="n">session</span>
+      <span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">TaskInstance</span><span class="o">.</span><span class="n">pool_slots</span><span class="p">))</span>
+      <span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">TaskInstance</span><span class="o">.</span><span class="n">pool</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">)</span>
+      <span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">TaskInstance</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">EXECUTION_STATES</span><span class="p">)))</span>
+      <span class="o">.</span><span class="n">scalar</span><span class="p">()</span>
+  <span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span>
+<span class="k">def</span> <span class="nf">running_slots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">queued_slots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">open_slots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span><span class="p">):</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<ol>
+  <li>此外，还提供了<code class="highlighter-rouge">to_json</code>方法，以json格式返回Pool的结构。</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td>
+<td class="rouge-code"><pre><span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="s">'id'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="nb">id</span><span class="p">,</span>
+    <span class="s">'pool'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">,</span>
+    <span class="s">'slots'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">slots</span><span class="p">,</span>
+    <span class="s">'description'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+  <span class="p">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<h4 id="usage-in-operator">Usage in Operator</h4>
+
+<p>接下来，看下operator是如何传递这个pool的。基本的实现在<code class="highlighter-rouge">BaseOperator</code>中，git link: https://github.com/apache/airflow/blob/master/airflow/models/baseoperator.py</p>
+
+<p>看参数定义，除了支持pool指定pool_name，还支持pool_slots，默认值是1，必须大于等于1，表示的是这个task需要占用的slots数目。除了指定这两个值，operator中没有对pool的额外操作。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre></td>
+<td class="rouge-code"><pre><span class="s">'''
+    :param pool: the slot pool this task should run in, slot pools are a
+    way to limit concurrency for certain tasks
+    :type pool: str
+    :param pool_slots: the number of pool slots this task should use (&gt;= 1)
+        Values less than 1 are not allowed.
+    :type pool_slots: int
+'''</span>
+<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="o">...</span>
+    <span class="n">pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">pool_slots</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="o">.</span><span class="n">DEFAULT_POOL_NAME</span> <span class="k">if</span> <span class="n">pool</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">pool</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pool_slots</span> <span class="o">=</span> <span class="n">pool_slots</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_slots</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+    	<span class="k">raise</span> <span class="n">AirflowException</span><span class="p">(</span><span class="s">"pool slots for </span><span class="si">%</span><span class="s">s in dag </span><span class="si">%</span><span class="s">s cannot be less than 1"</span>
+      		<span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_id</span><span class="p">,</span> <span class="n">dag</span><span class="o">.</span><span class="n">dag_id</span><span class="p">))</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<h4 id="implementation-in-job-scheduler">Implementation in job scheduler</h4>
+
+<p>定义了pool结构，并指定了task用的pool后，再来看下airflow是怎么基于pool进行jobs调度的。实现的code在<code class="highlighter-rouge">class SchedulerJob</code>中，git link: https://github.com/apache/airflow/blob/master/airflow/jobs/scheduler_job.py 关键的code已经摘出来了：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+</pre></td>
+<td class="rouge-code"><pre><span class="k">def</span> <span class="nf">_find_executable_task_instances</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simple_dag_bag</span><span class="p">:</span> <span class="n">SimpleDagBag</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="c1"># Get all task instances associated with scheduled
+</span>  <span class="c1"># DagRuns which are not backfilled, in the given states,
+</span>  <span class="c1"># and the dag is not paused
+</span>  <span class="c1">#这个是按一定条件找到可以execute的task_instances，随便看看吧
+</span>  <span class="n">task_instances_to_examine</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">session</span>
+    <span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">TI</span><span class="p">)</span>
+    <span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">TI</span><span class="o">.</span><span class="n">dag_id</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">simple_dag_bag</span><span class="o">.</span><span class="n">dag_ids</span><span class="p">))</span>
+    <span class="o">.</span><span class="n">outerjoin</span><span class="p">(</span>
+      <span class="n">DR</span><span class="p">,</span> <span class="n">and_</span><span class="p">(</span><span class="n">DR</span><span class="o">.</span><span class="n">dag_id</span> <span class="o">==</span> <span class="n">TI</span><span class="o">.</span><span class="n">dag_id</span><span class="p">,</span> <span class="n">DR</span><span class="o">.</span><span class="n">execution_date</span> <span class="o">==</span> <span class="n">TI</span><span class="o">.</span><span class="n">execution_date</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">or_</span><span class="p">(</span><span class="n">DR</span><span class="o">.</span><span class="n">run_id</span><span class="o">.</span><span class="n">is_</span><span class="p">(</span><span class="bp">None</span><span class="p">),</span> <span class="n">DR</span><span class="o">.</span><span class="n">run_type</span> <span class="o">!=</span> <span class="n">DagRunType</span><span class="o">.</span><span class="n">BACKFILL_JOB</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+    <span class="o">.</span><span class="n">outerjoin</span><span class="p">(</span><span class="n">DM</span><span class="p">,</span> <span class="n">DM</span><span class="o">.</span><span class="n">dag_id</span> <span class="o">==</span> <span class="n">TI</span><span class="o">.</span><span class="n">dag_id</span><span class="p">)</span>
+    <span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">or_</span><span class="p">(</span><span class="n">DM</span><span class="o">.</span><span class="n">dag_id</span><span class="o">.</span><span class="n">is_</span><span class="p">(</span><span class="bp">None</span><span class="p">),</span> <span class="n">not_</span><span class="p">(</span><span class="n">DM</span><span class="o">.</span><span class="n">is_paused</span><span class="p">)))</span>
+    <span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">TI</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">State</span><span class="o">.</span><span class="n">SCHEDULED</span><span class="p">)</span>
+    <span class="o">.</span><span class="nb">all</span><span class="p">()</span>
+  <span class="p">)</span>
+  <span class="c1"># Get the pool settings
+</span>  <span class="n">pools</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">pool</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Pool</span><span class="p">)</span><span class="o">.</span><span class="nb">all</span><span class="p">()}</span>
+  <span class="c1">#把task_instances_to_examine放到以pool_name为索引的dict里，结构是pool_name: task_instance list
+</span>  <span class="n">pool_to_task_instances</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">task_instance</span> <span class="ow">in</span> <span class="n">task_instances_to_examine</span><span class="p">:</span>
+    <span class="n">pool_to_task_instances</span><span class="p">[</span><span class="n">task_instance</span><span class="o">.</span><span class="n">pool</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task_instance</span><span class="p">)</span>
+
+  <span class="c1"># Go through each pool, and queue up a task for execution if there are
+</span>  <span class="c1"># any open slots in the pool.
+</span>  <span class="c1"># pylint: disable=too-many-nested-blocks
+</span>  <span class="c1">#挨个看pool_to_task_instances里的pool
+</span>  <span class="k">for</span> <span class="n">pool</span><span class="p">,</span> <span class="n">task_instances</span> <span class="ow">in</span> <span class="n">pool_to_task_instances</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+  	<span class="n">pool_name</span> <span class="o">=</span> <span class="n">pool</span>
+    <span class="c1">#意思是如果指定的pool在airflow里没有的话，这个task就不会被执行。但只有一个warnning的log，比较难发现，只能靠写的时候注意了。
+</span>    <span class="k">if</span> <span class="n">pool</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pools</span><span class="p">:</span>
+    	<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+        <span class="s">"Tasks using non-existent pool '</span><span class="si">%</span><span class="s">s' will not be scheduled"</span><span class="p">,</span>
+        <span class="n">pool</span>
+      <span class="p">)</span>
+      <span class="k">continue</span>
+    <span class="c1">#找到pool里的open_slots，还记得open_slots的定义不？
+</span>    <span class="n">open_slots</span> <span class="o">=</span> <span class="n">pools</span><span class="p">[</span><span class="n">pool</span><span class="p">]</span><span class="o">.</span><span class="n">open_slots</span><span class="p">(</span><span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">)</span>
+    <span class="n">num_ready</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">task_instances</span><span class="p">)</span>
+    <span class="c1">#这是对同一个pool里可执行的task_instances按权重排序，其中priority_weight也可以在operator中指定。排序是基于priority_weight（倒序）和task的执行时间（顺序）。
+</span>    <span class="n">priority_sorted_task_instances</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+    	<span class="n">task_instances</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">ti</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="n">ti</span><span class="o">.</span><span class="n">priority_weight</span><span class="p">,</span> <span class="n">ti</span><span class="o">.</span><span class="n">execution_date</span><span class="p">))</span>
+    <span class="c1">#为排完序的tasks分配slots
+</span>    <span class="k">for</span> <span class="n">current_index</span><span class="p">,</span> <span class="n">task_instance</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">priority_sorted_task_instances</span><span class="p">):</span>
+      <span class="c1">#先检查分配完的情况，就是打log，统计分配的个数等等。。
+</span>      <span class="k">if</span> <span class="n">open_slots</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+      	<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s">"Not scheduling since there are </span><span class="si">%</span><span class="s">s open slots in pool </span><span class="si">%</span><span class="s">s"</span><span class="p">,</span>
+          <span class="n">open_slots</span><span class="p">,</span> <span class="n">pool</span>
+        <span class="p">)</span>
+        <span class="c1"># Can't schedule any more since there are no more open slots.
+</span>        <span class="n">num_unhandled</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">priority_sorted_task_instances</span><span class="p">)</span> <span class="o">-</span> <span class="n">current_index</span>
+        <span class="n">num_starving_tasks</span> <span class="o">+=</span> <span class="n">num_unhandled</span>
+        <span class="n">num_starving_tasks_total</span> <span class="o">+=</span> <span class="n">num_unhandled</span>
+        <span class="k">break</span>
+        
+      <span class="c1"># 要先检查dag level的task concurrency
+</span>      <span class="c1"># Check to make sure that the task concurrency of the DAG hasn't been
+</span>      <span class="c1"># reached.
+</span>      <span class="n">simple_dag</span> <span class="o">=</span> <span class="n">simple_dag_bag</span><span class="o">.</span><span class="n">get_dag</span><span class="p">(</span><span class="n">dag_id</span><span class="p">)</span>
+      <span class="c1">#dag上可以设置task cuncurrency(dag_concurrency_limit)，表示这个dag最多能并行跑多少个tasks
+</span>      <span class="n">current_dag_concurrency</span> <span class="o">=</span> <span class="n">dag_concurrency_map</span><span class="p">[</span><span class="n">dag_id</span><span class="p">]</span>
+      <span class="n">dag_concurrency_limit</span> <span class="o">=</span> <span class="n">simple_dag_bag</span><span class="o">.</span><span class="n">get_dag</span><span class="p">(</span><span class="n">dag_id</span><span class="p">)</span><span class="o">.</span><span class="n">concurrency</span>
+      <span class="k">if</span> <span class="n">current_dag_concurrency</span> <span class="o">&gt;=</span> <span class="n">dag_concurrency_limit</span><span class="p">:</span>
+        <span class="k">continue</span>
+      <span class="c1">#task上可以设置task cuncurrency(task_concurrency_limit)，这是同一个DAG同时在跑多份job的情况下，限制下DAG中指定task的并发。
+</span>      <span class="n">task_concurrency_limit</span> <span class="o">=</span> <span class="n">simple_dag</span><span class="o">.</span><span class="n">get_task_special_arg</span><span class="p">(</span>
+        <span class="n">task_instance</span><span class="o">.</span><span class="n">task_id</span><span class="p">,</span>
+        <span class="s">'task_concurrency'</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">task_concurrency_limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">current_task_concurrency</span> <span class="o">=</span> <span class="n">task_concurrency_map</span><span class="p">[</span>
+          <span class="p">(</span><span class="n">task_instance</span><span class="o">.</span><span class="n">dag_id</span><span class="p">,</span> <span class="n">task_instance</span><span class="o">.</span><span class="n">task_id</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">current_task_concurrency</span> <span class="o">&gt;=</span> <span class="n">task_concurrency_limit</span><span class="p">:</span>
+          <span class="k">continue</span>
+      
+      <span class="c1">#如果task已经跑上了，就不再schedule了(不过不太清楚什么时候会出现这个情况)
+</span>      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="o">.</span><span class="n">has_task</span><span class="p">(</span><span class="n">task_instance</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+          <span class="s">"Not handling task </span><span class="si">%</span><span class="s">s as the executor reports it is running"</span><span class="p">,</span>
+          <span class="n">task_instance</span><span class="o">.</span><span class="n">key</span>
+        <span class="p">)</span>
+        <span class="n">num_tasks_in_executor</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">continue</span>
+      <span class="c1">#operator里指定的pool_slots，如果大于open_slots，task就继续等着
+</span>    	<span class="k">if</span> <span class="n">task_instance</span><span class="o">.</span><span class="n">pool_slots</span> <span class="o">&gt;</span> <span class="n">open_slots</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">"Not executing </span><span class="si">%</span><span class="s">s since it requires </span><span class="si">%</span><span class="s">s slots "</span>
+                      <span class="s">"but there are </span><span class="si">%</span><span class="s">s open slots in the pool </span><span class="si">%</span><span class="s">s."</span><span class="p">,</span>
+                      <span class="n">task_instance</span><span class="p">,</span> <span class="n">task_instance</span><span class="o">.</span><span class="n">pool_slots</span><span class="p">,</span> <span class="n">open_slots</span><span class="p">,</span> <span class="n">pool</span><span class="p">)</span>
+        <span class="n">num_starving_tasks</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">num_starving_tasks_total</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># Though we can execute tasks with lower priority if there's enough room
+</span>        <span class="k">continue</span>
+      <span class="c1">#经过一系列判断，到这一步的task终于进入到running的状态了！！！
+</span>      <span class="n">executable_tis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task_instance</span><span class="p">)</span>
+      <span class="n">open_slots</span> <span class="o">-=</span> <span class="n">task_instance</span><span class="o">.</span><span class="n">pool_slots</span>
+      <span class="n">dag_concurrency_map</span><span class="p">[</span><span class="n">dag_id</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">task_concurrency_map</span><span class="p">[(</span><span class="n">task_instance</span><span class="o">.</span><span class="n">dag_id</span><span class="p">,</span> <span class="n">task_instance</span><span class="o">.</span><span class="n">task_id</span><span class="p">)]</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>看了上面的源码，可以发现除了指定Pool，还可以：</p>
+
+<ol>
+  <li>通过设置DAG的<code class="highlighter-rouge">task concurrency</code>来限制task并发</li>
+  <li>设置task的<code class="highlighter-rouge">task concurrency</code>来限制DAG并行run情况下的某个task的并发</li>
+  <li>通过<code class="highlighter-rouge">priority_weight</code>影响task调度的优先级</li>
+  <li>以上可以和pool共用</li>
+</ol>
+
+<h3 id="总结">总结</h3>
+
+<p>通过Airflow Pool，我们可以很方便的限制tasks的并行度。其实，Airflow还提供了queue的功能，也可以实现类似的功能。而具体queue和pool的区别在哪，需要继续调研。</p>
+
+
+
+                <hr>
+				<p>今天的内容就到这了，如果觉得对你有帮助的话，请关注我的微信号，让我们共同成长进步~</p>
+				<p><img src="/img/search.png" width="60%;"></p>
+                <hr style="visibility: hidden;">
+				<p><b>本文作者：</b>Jessychen<br><b>版权声明：</b>本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC-BY-NC-SA 4.0 Int'l</a>许可协议<br><b>如需转载，烦请注明出处: </b><span id="ref" style="color: #337ab7"></span></p>
+                <hr style="visibility: hidden;">
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2020/04/25/master-theorem/" data-toggle="tooltip" data-placement="top" title="主定理分析算法的时间复杂度">
+                        Previous<br>
+                        <span>主定理分析算法的时间复杂度</span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+                <hr style="visibility: hidden;">
+
+                
+
+                
+				
+				
+					<div id="gitalk-container"></div>
+                
+
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+        <hr class="hidden-sm hidden-xs">
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        
+        
+        
+                <a data-sort="0006" href="/archive/?tag=Airflow" title="Airflow" rel="5">Airflow</a>
+        
+                <a data-sort="0001" href="/archive/?tag=CS" title="CS" rel="10">CS</a>
+        
+                <a data-sort="0008" href="/archive/?tag=MiniProj" title="MiniProj" rel="3">MiniProj</a>
+        
+                <a data-sort="0008" href="/archive/?tag=Python" title="Python" rel="3">Python</a>
+        
+                <a data-sort="0009" href="/archive/?tag=Cloud" title="Cloud" rel="2">Cloud</a>
+        
+                <a data-sort="0010" href="/archive/?tag=Alert" title="Alert" rel="1">Alert</a>
+        
+                <a data-sort="0010" href="/archive/?tag=algorithm" title="algorithm" rel="1">algorithm</a>
+        
+                <a data-sort="0010" href="/archive/?tag=other" title="other" rel="1">other
+    </a>
+</div>
+</section>
+
+
+                <!-- Suggest Blog -->
+                
+<hr>
+<h5>SUGGESTS</h5>
+<ul class="list-inline">
+  
+  <li><a href="/lab">LAB</a></li>
+  
+</ul>
+
+
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- add support for mathjax by voleking-->
+
+
+
+
+
+
+<!-- gitalk -->
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/mermaid/8.0.0-rc.8/mermaid.min.js"></script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+<script>
+	const gitalk = new Gitalk({
+	clientID: '74d564b1bb80db468c1f',
+	clientSecret: 'ac9d9ddf2cc77678e2bee6bc66871afb8f4a137d',
+	repo: 'jessychen1984.github.io',
+	owner: 'jessychen1984',
+	admin: ['jessychen1984'],
+	id: location.pathname, 
+	distractionFreeMode: true,  // Facebook-like distraction free mode
+	language: 'zh-CN'
+	})
+
+	gitalk.render('gitalk-container')
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'right',
+          // icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+<script>
+	window.onload = function(){
+		$("#ref").html(window.location.href)
+	}
+
+</script>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/jessychen1984">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright © KiwiJia Blog 2020
+                    <br>
+                    Powered by <a href="http://huangxuan.me">Hux Blog</a> |
+					<!-- <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+					</iframe>-->
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js"></script>
+<script src="/js/sw-registration.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e50651e7413d7230700b00880927562f';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+<!-- Multi-Lingual -->
+
+
+
+
+<!-- Image to hack wechat -->
+<!--<img src="/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
